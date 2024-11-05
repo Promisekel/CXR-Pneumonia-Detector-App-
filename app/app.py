@@ -53,7 +53,7 @@ st.markdown(
     """S
     <div style="display: flex; align-items: center;">
         <h3><a href="https://github.com/Promisekel/CXR-Pneumonia-Detector-App-" target="_blank">
-            <img src="https://drive.google.com/file/d/1YcIOtPFb-VAYRpr5nKuoiK2tiAwlKmMl/view?usp=sharing" alt="KCCR" style="margin-right: 10px;">Github    
+            <img src="https://drive.google.com/file/d/1YcIOtPFb-VAYRpr5nKuoiK2tiAwlKmMl/view?usp=sharing" alt="KCCR" style="margin-center: 10px;">    
         </a>
         </h3>
     </div>
@@ -73,7 +73,7 @@ def load_models():
     return model, xray_detector
 
 st.title("CLAARITY PROJECT CXR PNEUMONIA DETERCTOR")
-st.write("Upload a chest X-ray image to get a prediction.")
+st.write("UPLOAD THE CHEST X-RAY TO PREDICT PATIENT PNEUMONIA OUTCOME.")
 
 # Load models
 model, xray_detector = load_models()
