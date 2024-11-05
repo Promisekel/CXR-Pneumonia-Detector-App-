@@ -4,3 +4,4 @@ numpy
 pandas 
 pillow
 firebase-admin
+os
