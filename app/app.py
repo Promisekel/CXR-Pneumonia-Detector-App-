@@ -139,46 +139,9 @@ def predict_and_display_results(image):
         st.write("Uploaded image is not an X-ray. Please upload a chest X-ray image.")
 
 # Handle file upload
-#uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 ######################################################################################
-cred = credentials.Certificate("app/firebase_credentials.json")
-firebase_admin.initialize_app(cred, {
-    'storageBucket': 'gs://campuslink-app.appspot.com/cxr_images'
-})
 
-# Function to list files in a Firebase Storage directory
-def list_files_in_directory(directory_path):
-    bucket = storage.bucket()
-    blobs = bucket.list_blobs(prefix=directory_path)
-    file_paths = [blob.name for blob in blobs if blob.name != directory_path]  # Exclude the directory itself
-    return file_paths
-
-# Function to download an image file from Firebase Storage
-def download_image_from_firebase(file_path):
-    bucket = storage.bucket()
-    blob = bucket.blob(file_path)
-    image_data = blob.download_as_bytes()
-    return image_data
-
-# Streamlit UI
-st.title("Select and Display Image from Firebase Storage")
-
-# List files in the directory
-directory_path = "/cxr_images/"  # Replace with your Firebase directory
-file_paths = list_files_in_directory(directory_path)
-
-# Allow user to select a file
-selected_file = st.selectbox("Select an image to display", file_paths)
-
-# Download and display the selected image
-if selected_file:
-    try:
-        image_data = download_image_from_firebase(selected_file)
-        image = Image.open(BytesIO(image_data))
-        st.image(image, caption=f"Displaying: {selected_file}", use_column_width=True)
-    except Exception as e:
-        st.write("Failed to download the image from Firebase Storage.")
-        st.write(e)
 ##################################################################################
 
 if uploaded_file is not None:
