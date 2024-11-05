@@ -46,14 +46,14 @@ from predict import predict, is_xray
 import pathlib
 
 # Set the page title
-st.set_page_config(page_title="X-Ray pneumonia detection")
+st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETERCTOR")
 
 # Add GitHub link with logo at the top
 st.markdown(
     """S
     <div style="display: flex; align-items: center;">
         <h3><a href="https://github.com/Promisekel/CXR-Pneumonia-Detector-App-" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/50/007BFF/github.png" alt="GitHub" style="margin-right: 10px;">Github    
+            <img src="https://drive.google.com/file/d/1YcIOtPFb-VAYRpr5nKuoiK2tiAwlKmMl/view?usp=sharing" alt="KCCR" style="margin-right: 10px;">Github    
         </a>
         </h3>
     </div>
@@ -72,7 +72,7 @@ def load_models():
     xray_detector = load_xray_detector()  # Load X-ray detector model
     return model, xray_detector
 
-st.title("Pneumonia Detection from Chest X-rays")
+st.title("CLAARITY PROJECT CXR PNEUMONIA DETERCTOR")
 st.write("Upload a chest X-ray image to get a prediction.")
 
 # Load models
