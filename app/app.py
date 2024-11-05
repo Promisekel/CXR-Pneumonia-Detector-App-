@@ -40,6 +40,7 @@
 
 import streamlit as st
 from PIL import Image
+import os
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import pathlib
@@ -68,7 +69,8 @@ temp = pathlib.PosixPath
 pathlib.PosixPath = pathlib.WindowsPath
 
 # Initialize Firebase
-cred = credentials.Certificate("firebase_credentials.json")
+cred_path = os.path.join(os.path.dirname(__file__), 'firebase_credentials.json')
+cred = credentials.Certificate(cred_path)
 firebase_admin.initialize_app(cred, {
     'storageBucket': 'gs://campuslink-app.appspot.com'
 })
