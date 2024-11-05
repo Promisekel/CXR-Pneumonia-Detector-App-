@@ -46,7 +46,7 @@ from predict import predict, is_xray
 import pathlib
 
 # Set the page title
-st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETERCTOR")
+st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 
 # Add GitHub link with logo at the top
 st.markdown(
