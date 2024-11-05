@@ -50,10 +50,10 @@ st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETERCTOR")
 
 # Add GitHub link with logo at the top
 st.markdown(
-    """S
+    """
     <div style="display: flex; align-items: center;">
-        <h3><a href="https://github.com/Promisekel/CXR-Pneumonia-Detector-App-" target="_blank">
-            <img src="https://drive.google.com/file/d/1YcIOtPFb-VAYRpr5nKuoiK2tiAwlKmMl/view?usp=sharing" alt="KCCR" style="margin-center: 10px;">    
+        <h3><a href="https://kccr-ghana.org/" target="_blank">
+            <img src="https://drive.google.com/uc?export=view&id=1YcIOtPFb-VAYRpr5nKuoiK2tiAwlKmMl" alt="KCCR" style="margin: 10px;">
         </a>
         </h3>
     </div>
