@@ -68,7 +68,7 @@ def load_models():
     return model, xray_detector
 
 st.title("CLAARITY PROJECT CHEST X-RAY PNEUMONIA DETERCTOR")
-st.write("EELECT PID OF PATIENT TO PREDICT PNEUMONIA OUTCOME")
+st.write("SELECT PID OF PATIENT TO PREDICT PNEUMONIA OUTCOME")
 # Load models
 model, xray_detector = load_models()
 
