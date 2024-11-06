@@ -57,7 +57,7 @@ st.markdown(
             <a href="https://github.com/Promisekel/CXR-Pneumonia-Detector-App-" target="_blank">
                 <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIBfJxFgGX2d961bTaupSiOuAS8TmF_7BC0g&s" 
                      alt="Custom Icon" style="margin-right: 10px; width: 50px; height: auto;">
-                KCCR 
+                KCCR
             </a>
         </h3>
     </div>
