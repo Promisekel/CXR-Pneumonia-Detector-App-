@@ -67,7 +67,7 @@ def load_models():
     xray_detector = load_xray_detector()
     return model, xray_detector
 
-st.title("Pneumonia Detection from Chest X-rays")
+st.title("CLAARITY CHEST-XRAY PNEUMONIA DIAGNOSIS DETECTOR")
 st.write("Select a patient ID in the dropdown to Predict Pneumonia.")
 
 # Load models
