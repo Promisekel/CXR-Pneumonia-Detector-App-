@@ -3,6 +3,4 @@ fastai
 numpy 
 pandas 
 pillow
-firebase-admin
-gdown
 
