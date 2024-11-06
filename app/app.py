@@ -126,54 +126,60 @@ from PIL import Image
 from model import load_model
 from predict import predict
 # import pathlib
+
 import streamlit as st
 from PIL import Image
+from io import BytesIO
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import requests
-from io import BytesIO
 import pathlib
 
-# Set up page configuration
+!pip install requests
+
+# Set the page title
 st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 
-# Load models once with caching
+# Temporary redirect PosixPath to WindowsPath
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
+
 @st.cache(allow_output_mutation=True)
 def load_models():
     model = load_model()
     xray_detector = load_xray_detector()
     return model, xray_detector
 
-# Display app title and instructions
 st.title("CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
-st.write("Upload a chest X-ray or provide a Google Drive link to predict the patient's pneumonia outcome.")
+st.write("Enter the Google Drive URL of the chest X-ray to predict pneumonia outcome.")
 
 # Load models
 model, xray_detector = load_models()
 
-# Define function to download image from Google Drive
-def download_image_from_drive(url):
-    file_id = url.split('/')[-2]
+# Input for Google Drive URL
+google_drive_url = st.text_input("Enter Google Drive image URL:")
+
+# Extract image ID and generate a direct download link
+def fetch_image_from_drive(google_drive_url):
+    file_id = google_drive_url.split("/d/")[1].split("/")[0]
     download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
     response = requests.get(download_url)
     if response.status_code == 200:
-        return Image.open(BytesIO(response.content))
+        image = Image.open(BytesIO(response.content))
+        return image
     else:
-        st.write("Failed to download image from the URL.")
+        st.write("Failed to fetch the image. Please check the URL.")
         return None
 
-# Google Drive URL input
-drive_url = st.text_input("Paste Google Drive image URL here:")
-
-if drive_url:
-    # Download image from Google Drive
-    image = download_image_from_drive(drive_url)
+# Predict and display results
+if google_drive_url:
+    image = fetch_image_from_drive(google_drive_url)
     if image:
-        st.image(image, caption='Downloaded Image', use_column_width=True)
+        st.image(image, caption='Fetched Image.', use_column_width=True)
         st.write("Checking if the image is an X-ray...")
-        
-        # Temporarily save image and predict
-        img_path = "temp_image.jpg"
+
+        # Save temporarily for prediction
+        img_path = "data/fetched_image.png"
         image.save(img_path)
 
         if is_xray(xray_detector, img_path):
@@ -182,5 +188,6 @@ if drive_url:
             st.write(f"Prediction: {label}")
         else:
             st.write("Uploaded image is not an X-ray. Please upload a chest X-ray image.")
-else:
-    st.write("Provide a Google Drive URL or upload an image to proceed.")
+
+# Restore PosixPath after prediction
+pathlib.PosixPath = temp
