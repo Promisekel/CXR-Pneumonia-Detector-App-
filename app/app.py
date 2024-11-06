@@ -116,15 +116,7 @@
     
 #     label = predict(model, img_path)
 #     st.write(f"Prediction: {label}")
-import streamlit as st
-from PIL import Image, UnidentifiedImageError
-import requests
-from io import BytesIO
-import pathlib
-import streamlit as st
-from PIL import Image
-from model import load_model
-from predict import predict
+
 # import pathlib
 import streamlit as st
 from PIL import Image
