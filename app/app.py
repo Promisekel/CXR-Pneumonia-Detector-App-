@@ -48,17 +48,23 @@ import os
 st.set_page_config(page_title="CLAARITY CHEST-XRAY PNEUMONIA DIAGNOSIS DETECTOR")
 
 # GitHub link with logo at the top
+import streamlit as st
+
 st.markdown(
     """
     <div style="display: flex; align-items: center;">
-        <h3><a href="https://github.com/Promisekel/CXR-Pneumonia-Detector-App-" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/50/007BFF/github.png" alt="GitHub" style="margin-right: 10px;">Github Repository   
-        </a>
+        <h3>
+            <a href="https://github.com/Promisekel/CXR-Pneumonia-Detector-App-" target="_blank">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIBfJxFgGX2d961bTaupSiOuAS8TmF_7BC0g&s" 
+                     alt="Custom Icon" style="margin-right: 10px; width: 50px; height: auto;">
+                Github Repository   
+            </a>
         </h3>
     </div>
     """,
     unsafe_allow_html=True
 )
+
 
 # Load models function
 @st.cache(allow_output_mutation=True)
