@@ -116,12 +116,9 @@
     
 #     label = predict(model, img_path)
 #     st.write(f"Prediction: {label}")
-import streamlit as st
 from PIL import Image, UnidentifiedImageError
 import requests
 from io import BytesIO
-from model import load_model, load_xray_detector
-from predict import predict, is_xray
 import pathlib
 
 # Set the page title
@@ -156,13 +153,17 @@ def predict_and_display_results(image, image_name):
     st.image(image, caption=image_name, use_column_width=True)
     st.write("Analyzing the image to confirm it’s an X-ray...")
 
-    # Save the image temporarily
+    # Ensure the file has an extension (e.g., .jpg)
     img_path = pathlib.Path(f"data/{image_name}")
+    if not img_path.suffix:
+        img_path = img_path.with_suffix(".jpg")  # Default to .jpg if no extension exists
+
+    # Save the image temporarily
     image.save(img_path)
 
     # Perform X-ray check and prediction
     if is_xray(xray_detector, img_path):
-        st.write("Image confirmed as X-ray. Classifying for pneumonia please wait...")
+        st.write("Image confirmed as X-ray. Classifying for pneumonia, please wait...")
         label = predict(model, img_path)
         st.write(f"Prediction: {label}")
     else:
