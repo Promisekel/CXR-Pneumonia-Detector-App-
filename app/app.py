@@ -131,8 +131,11 @@ import streamlit as st
 from PIL import Image, UnidentifiedImageError
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
-import requests
-from io import BytesIO
+import gdown
+import os
+
+# Set up page configuration
+st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 
 # Load models with caching
 @st.cache(allow_output_mutation=True)
@@ -141,30 +144,27 @@ def load_models():
     xray_detector = load_xray_detector()
     return model, xray_detector
 
-# Function to download and verify image from Google Drive
-def download_image_from_drive(url):
+# Function to download image from Google Drive using gdown
+def download_image_from_drive(url, output_path="downloaded_image.jpg"):
     try:
         # Extract the file ID from the Google Drive URL
         file_id = url.split('/')[-2]
         download_url = f"https://drive.google.com/uc?export=download&id={file_id}"
         
-        # Send a GET request to download the image
-        response = requests.get(download_url)
-        response.raise_for_status()  # Check for HTTP errors
-
-        # Verify if response content is an image
-        try:
-            image = Image.open(BytesIO(response.content))
-            return image
-        except UnidentifiedImageError:
-            st.error("The file downloaded is not recognized as an image. Ensure the URL is correct and public.")
-            return None
+        # Use gdown to download the image directly
+        gdown.download(download_url, output_path, quiet=False)
+        
+        # Open the downloaded image
+        image = Image.open(output_path)
+        return image
+    except UnidentifiedImageError:
+        st.error("The downloaded file is not recognized as an image. Ensure the URL is correct and public.")
+        return None
     except Exception as e:
         st.error(f"An error occurred while downloading the image: {e}")
         return None
 
 # Streamlit app setup
-st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 st.title("CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 st.write("Paste a Google Drive image URL or upload a chest X-ray to predict pneumonia outcome.")
 
@@ -175,6 +175,7 @@ model, xray_detector = load_models()
 drive_url = st.text_input("Paste Google Drive image URL here:")
 
 if drive_url:
+    # Attempt to download and display the image
     image = download_image_from_drive(drive_url)
     if image:
         st.image(image, caption='Downloaded Image', use_column_width=True)
@@ -192,3 +193,7 @@ if drive_url:
             st.write("Uploaded image is not an X-ray. Please upload a chest X-ray image.")
 else:
     st.write("Provide a Google Drive URL or upload an image to proceed.")
+
+# Clean up the downloaded image file if needed
+if os.path.exists("temp_image.jpg"):
+    os.remove("temp_image.jpg")
