@@ -163,6 +163,9 @@ def predict_and_display_results(image, image_name):
     img_dir = pathlib.Path("data")
     img_dir.mkdir(parents=True, exist_ok=True)  # Create 'data' directory if it doesn't exist
 
+    # Remove the '?raw=true' query parameter from the filename
+    image_name = image_name.split("?")[0]  # This strips the query parameter
+    
     # Ensure the file has an extension (e.g., .jpg)
     img_path = img_dir / f"{image_name}"
     if not img_path.suffix:
