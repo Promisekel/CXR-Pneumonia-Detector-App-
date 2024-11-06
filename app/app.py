@@ -45,7 +45,7 @@ from predict import predict, is_xray
 import os
 
 # Set the page title
-st.set_page_config(page_title="CLAARITY CHEST-XRAY PNEUMONIA DIAGNOSIS DETECTOR")
+st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
 
 # GitHub link with logo at the top
 import streamlit as st
@@ -73,7 +73,7 @@ def load_models():
     xray_detector = load_xray_detector()
     return model, xray_detector
 
-st.title("CLAARITY CHEST-XRAY PNEUMONIA DIAGNOSIS DETECTOR")
+st.title("CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
 st.write("Select a patient ID in the dropdown to Predict Pneumonia.")
 
 # Load models
