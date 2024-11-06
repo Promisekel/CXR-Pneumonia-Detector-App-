@@ -117,7 +117,7 @@
 #     label = predict(model, img_path)
 #     st.write(f"Prediction: {label}")
 import streamlit as st
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import requests
 from io import BytesIO
 from model import load_model, load_xray_detector
@@ -127,10 +127,10 @@ import pathlib
 # Set the page title
 st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 
-# GitHub image URLs
+# GitHub image URLs (ensure URLs end with ?raw=true)
 image_urls = [
-    "https://github.com/Promisekel/cxr_scans/blob/main/WhatsApp%20Image%202024-09-24%20at%2010.37.48_b40dff0a.jpg?raw=true",
-    "https://github.com/Promisekel/cxr_scans/blob/main/4-normal-healthy-chest-x-ray-photostock-israel-canvas-print.jpg?raw=true",
+    "https://github.com/Promisekel/cxr_scans/blob/main/images%20(1).jpeg?raw=true",
+    "https://github.com/Promisekel/cxr_scans/blob/main/images%20(2).jpeg?raw=true",
     # Add all 10 image URLs here
 ]
 
@@ -170,6 +170,12 @@ def predict_and_display_results(image, image_name):
 
 # Display selected image
 if selected_image_url:
-    response = requests.get(selected_image_url)
-    image = Image.open(BytesIO(response.content))
-    predict_and_display_results(image, selected_image_url.split("/")[-1])
+    try:
+        response = requests.get(selected_image_url)
+        response.raise_for_status()  # Check if request was successful
+        image = Image.open(BytesIO(response.content))
+        predict_and_display_results(image, selected_image_url.split("/")[-1])
+    except UnidentifiedImageError:
+        st.error("Error: The selected URL did not return a valid image. Please check the URL.")
+    except requests.exceptions.RequestException as e:
+        st.error(f"Error fetching the image: {e}")
