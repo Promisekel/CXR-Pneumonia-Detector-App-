@@ -129,8 +129,8 @@ st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 
 # GitHub image URLs (ensure URLs end with ?raw=true)
 image_urls = [
-    "https://github.com/Promisekel/cxr_scans/blob/main/images%20(1).jpeg?raw=true",
-    "https://github.com/Promisekel/cxr_scans/blob/main/images%20(2).jpeg?raw=true",
+    "https://github.com/Promisekel/cxr_scans/blob/main/image1.jpg?raw=true",
+    "https://github.com/Promisekel/cxr_scans/blob/main/image2.jpg?raw=true",
     # Add all 10 image URLs here
 ]
 
