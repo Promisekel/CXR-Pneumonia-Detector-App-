@@ -162,7 +162,7 @@ def predict_and_display_results(image, image_name):
 
     # Perform X-ray check and prediction
     if is_xray(xray_detector, img_path):
-        st.write("Image confirmed as X-ray. Classifying for pneumonia...")
+        st.write("Image confirmed as X-ray. Classifying for pneumonia please wait...")
         label = predict(model, img_path)
         st.write(f"Prediction: {label}")
     else:
