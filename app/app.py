@@ -1,121 +1,4 @@
-# import streamlit as st
-# from PIL import Image
-# from model import load_model
-# from predict import predict
-# import pathlib
 
-
-# # Temporary redirect PosixPath to WindowsPath
-# temp = pathlib.PosixPath
-# pathlib.PosixPath = pathlib.WindowsPath
-
-# st.title("Pneumonia Detection from Chest X-rays")
-# st.write("Upload a chest X-ray image to get a prediction.")
-
-# model = load_model()
-
-# # Restore PosixPath
-# pathlib.PosixPath = temp
-
-# uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-
-# if uploaded_file is not None:
-
-#     # Temporary redirect PosixPath to WindowsPath again during prediction
-#     pathlib.PosixPath = pathlib.WindowsPath
-
-#     image = Image.open(uploaded_file)
-#     st.image(image, caption='Uploaded Image.', use_column_width=True)
-#     st.write("")
-#     st.write("Classifying...")
-
-#     img_path = f"data/{uploaded_file.name}"
-#     image.save(img_path)
-
-#     # Restore PosixPath after prediction
-#     pathlib.PosixPath = temp
-    
-#     label = predict(model, img_path)
-#     st.write(f"Prediction: {label}")
-# import streamlit as st
-# from PIL import Image
-# from model import load_model
-# from predict import predict
-# import pathlib
-
-
-# # Temporary redirect PosixPath to WindowsPath
-# temp = pathlib.PosixPath
-# pathlib.PosixPath = pathlib.WindowsPath
-
-# st.title("Pneumonia Detection from Chest X-rays")
-# st.write("Upload a chest X-ray image to get a prediction.")
-
-# model = load_model()
-
-# # Restore PosixPath
-# pathlib.PosixPath = temp
-
-# uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-
-# if uploaded_file is not None:
-
-#     # Temporary redirect PosixPath to WindowsPath again during prediction
-#     pathlib.PosixPath = pathlib.WindowsPath
-
-#     image = Image.open(uploaded_file)
-#     st.image(image, caption='Uploaded Image.', use_column_width=True)
-#     st.write("")
-#     st.write("Classifying...")
-
-#     img_path = f"data/{uploaded_file.name}"
-#     image.save(img_path)
-
-#     # Restore PosixPath after prediction
-#     pathlib.PosixPath = temp
-    
-#     label = predict(model, img_path)
-#     st.write(f"Prediction: {label}")
-
-# import streamlit as st
-# from PIL import Image
-# from model import load_model
-# from predict import predict
-# import pathlib
-
-
-# # Temporary redirect PosixPath to WindowsPath
-# temp = pathlib.PosixPath
-# pathlib.PosixPath = pathlib.WindowsPath
-
-# st.title("Pneumonia Detection from Chest X-rays")
-# st.write("Upload a chest X-ray image to get a prediction.")
-
-# model = load_model()
-
-# # Restore PosixPath
-# pathlib.PosixPath = temp
-
-# uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-
-# if uploaded_file is not None:
-
-#     # Temporary redirect PosixPath to WindowsPath again during prediction
-#     pathlib.PosixPath = pathlib.WindowsPath
-
-#     image = Image.open(uploaded_file)
-#     st.image(image, caption='Uploaded Image.', use_column_width=True)
-#     st.write("")
-#     st.write("Classifying...")
-
-#     img_path = f"data/{uploaded_file.name}"
-#     image.save(img_path)
-
-#     # Restore PosixPath after prediction
-#     pathlib.PosixPath = temp
-    
-#     label = predict(model, img_path)
-#     st.write(f"Prediction: {label}")
 # import streamlit as st
 # from PIL import Image
 # from model import load_model
@@ -163,16 +46,15 @@ from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import pathlib
 
-
 # Set the page title
-st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
+st.set_page_config(page_title="X-Ray pneumonia detection")
 
 # Add GitHub link with logo at the top
 st.markdown(
     """
     <div style="display: flex; align-items: center;">
-        <h3><a href="https://kccr-ghana.org/" target="_blank">
-            <img src="https://drive.google.com/uc?export=view&id=1YcIOtPFb-VAYRpr5nKuoiK2tiAwlKmMl" alt="KCCR" style="margin: 10px;">
+        <h3><a href="https://github.com/khurshiduktamov/pneumonia-diagnosis" target="_blank">
+            <img src="https://img.icons8.com/ios-filled/50/007BFF/github.png" alt="GitHub" style="margin-right: 10px;">Github Repository   
         </a>
         </h3>
     </div>
@@ -191,8 +73,8 @@ def load_models():
     xray_detector = load_xray_detector()  # Load X-ray detector model
     return model, xray_detector
 
-st.title("CLAARITY PROJECT CXR PNEUMONIA DETERCTOR")
-st.write("UPLOAD THE CHEST X-RAY TO PREDICT PATIENT PNEUMONIA OUTCOME.")
+st.title("Pneumonia Detection from Chest X-rays")
+st.write("Upload a chest X-ray image to get a prediction.")
 
 # Load models
 model, xray_detector = load_models()
@@ -216,9 +98,6 @@ def predict_and_display_results(image):
 
 # Handle file upload
 uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-######################################################################################
-
-##################################################################################
 
 if uploaded_file is not None:
     try:
