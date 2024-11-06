@@ -45,14 +45,14 @@ from predict import predict, is_xray
 import os
 
 # Set the page title
-st.set_page_config(page_title="X-Ray Pneumonia Detection")
+st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 
 # GitHub link with logo at the top
 st.markdown(
     """
     <div style="display: flex; align-items: center;">
-        <h3><a href="https://github.com/khurshiduktamov/pneumonia-diagnosis" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/50/007BFF/github.png" alt="GitHub" style="margin-right: 10px;">Github Repository   
+        <h3><a href="https://kccr-ghana.org/" target="_blank">
+            <img src="https://drive.google.com/uc?export=view&id=1YcIOtPFb-VAYRpr5nKuoiK2tiAwlKmMl" alt="KCCR" style="margin: 10px;">
         </a>
         </h3>
     </div>
@@ -67,9 +67,8 @@ def load_models():
     xray_detector = load_xray_detector()
     return model, xray_detector
 
-st.title("Pneumonia Detection from Chest X-rays")
-st.write("Select a chest X-ray image to get a prediction.")
-
+st.title("CLAARITY PROJECT CHEST X-RAY PNEUMONIA DETERCTOR")
+st.write("EELECT PID OF PATIENT TO PREDICT PNEUMONIA OUTCOME")
 # Load models
 model, xray_detector = load_models()
 
@@ -95,9 +94,10 @@ if image_files:
 
         # Check if the image is an X-ray and classify for pneumonia
         if is_xray(xray_detector, image_path):
-            st.write("Image is an X-ray. Classifying for pneumonia...")
+            st.write("Image is an X-ray")
+            st.write("Scaning pateint for possible pneumonia...")
             label = predict(model, image_path)
-            st.write(f"Prediction: {label}")
+            st.write(f"Scan outcome: {label}")
         else:
             st.write("Selected image is not an X-ray. Please select a chest X-ray image.")
 else:
