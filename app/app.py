@@ -88,7 +88,7 @@ image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'j
 
 # Display dropdown if images are available
 if image_files:
-    selected_image = st.selectbox("Choose an image for prediction:", image_files)
+    selected_image = st.selectbox("Select patient ID to diagnose Pneumonia", image_files)
 
     # Predict and display results when an image is selected
     if selected_image:
