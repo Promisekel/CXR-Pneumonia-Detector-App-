@@ -38,18 +38,16 @@
     
 #     label = predict(model, img_path)
 #     st.write(f"Prediction: {label}")
-
-
 import streamlit as st
 from PIL import Image
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
-import pathlib
+import os
 
 # Set the page title
-st.set_page_config(page_title="X-Ray pneumonia detection")
+st.set_page_config(page_title="X-Ray Pneumonia Detection")
 
-# Add GitHub link with logo at the top
+# GitHub link with logo at the top
 st.markdown(
     """
     <div style="display: flex; align-items: center;">
@@ -62,49 +60,45 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Temporary redirect PosixPath to WindowsPath
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
-
-# Function to load models
+# Load models function
 @st.cache(allow_output_mutation=True)
 def load_models():
-    model = load_model()  # Load pneumonia prediction model
-    xray_detector = load_xray_detector()  # Load X-ray detector model
+    model = load_model()
+    xray_detector = load_xray_detector()
     return model, xray_detector
 
 st.title("Pneumonia Detection from Chest X-rays")
-st.write("Upload a chest X-ray image to get a prediction.")
+st.write("Select a chest X-ray image to get a prediction.")
 
 # Load models
 model, xray_detector = load_models()
 
-# Function to predict and display results
-def predict_and_display_results(image):
-    st.image(image, caption='Uploaded Image.', use_column_width=True)
-    st.write("")
-    st.write("Checking if the image is an X-ray...")
+# Directory where images are stored
+image_dir = "data/images"
+os.makedirs(image_dir, exist_ok=True)
 
-    # Save uploaded image temporarily
-    img_path = f"data/{uploaded_file.name}"
-    image.save(img_path)
+# List images in the directory
+image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
 
-    if is_xray(xray_detector, img_path):
-        st.write("Image is an X-ray. Classifying for pneumonia...")
-        label = predict(model, img_path)
-        st.write(f"Prediction: {label}")
-    else:
-        st.write("Uploaded image is not an X-ray. Please upload a chest X-ray image.")
+# Display dropdown if images are available
+if image_files:
+    selected_image = st.selectbox("Choose an image for prediction:", image_files)
 
-# Handle file upload
-uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
+    # Predict and display results when an image is selected
+    if selected_image:
+        image_path = os.path.join(image_dir, selected_image)
+        
+        # Display the image
+        image = Image.open(image_path)
+        st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
+        st.write("Checking if the image is an X-ray...")
 
-if uploaded_file is not None:
-    try:
-        image = Image.open(uploaded_file)
-        predict_and_display_results(image)
-    except:
-        st.write("Invalid image file. Please try again.")
-
-# Restore PosixPath after prediction
-pathlib.PosixPath = temp
+        # Check if the image is an X-ray and classify for pneumonia
+        if is_xray(xray_detector, image_path):
+            st.write("Image is an X-ray. Classifying for pneumonia...")
+            label = predict(model, image_path)
+            st.write(f"Prediction: {label}")
+        else:
+            st.write("Selected image is not an X-ray. Please select a chest X-ray image.")
+else:
+    st.write("No images found in the directory. Please add images to 'data/images' and refresh.")
