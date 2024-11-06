@@ -18,7 +18,7 @@ def load_model():
     # Load the model
     model = load_learner(model_path_str)
     
-    # Return the model
+    # Return the model to you
     return model
 
 def load_xray_detector():
