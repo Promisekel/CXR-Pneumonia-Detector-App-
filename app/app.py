@@ -122,20 +122,17 @@ import requests
 from io import BytesIO
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
+import pathlib
 
 # Set the page title
 st.set_page_config(page_title="CLAARITY PROJECT CXR PNEUMONIA DETECTOR")
 
 # GitHub image URLs
 image_urls = [
-    "https://github.com/Promisekel/cxr_scans/blob/main/4-normal-healthy-chest-x-ray-photostock-israel-canvas-print.jpg?raw=true",
     "https://github.com/Promisekel/cxr_scans/blob/main/WhatsApp%20Image%202024-09-24%20at%2010.37.48_b40dff0a.jpg?raw=true",
+    "https://github.com/Promisekel/cxr_scans/blob/main/4-normal-healthy-chest-x-ray-photostock-israel-canvas-print.jpg?raw=true",
     # Add all 10 image URLs here
 ]
-
-# Temporary redirect PosixPath to WindowsPath
-temp = pathlib.PosixPath
-pathlib.PosixPath = pathlib.WindowsPath
 
 # Function to load models
 @st.cache(allow_output_mutation=True)
@@ -160,7 +157,7 @@ def predict_and_display_results(image, image_name):
     st.write("Analyzing the image to confirm it’s an X-ray...")
 
     # Save the image temporarily
-    img_path = f"data/{image_name}"
+    img_path = pathlib.Path(f"data/{image_name}")
     image.save(img_path)
 
     # Perform X-ray check and prediction
@@ -176,7 +173,3 @@ if selected_image_url:
     response = requests.get(selected_image_url)
     image = Image.open(BytesIO(response.content))
     predict_and_display_results(image, selected_image_url.split("/")[-1])
-
-# Restore PosixPath
-pathlib.PosixPath = temp
-
