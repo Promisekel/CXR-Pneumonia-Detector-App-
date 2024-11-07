@@ -107,11 +107,12 @@ if image_files:
             st.write("sCAN IS AN X-RAY. Scanning for pneumonia...")
             label = predict(model, image_path)
             st.write(f"Outcome of scan: {label}")
-             # Display inline text with tick icon using Markdown and HTML
-        st.markdown(
+             st.markdown(
             f'<p>✅<strong>SCAN IS AN X-RAY. Scanning for pneumonia...</strong></p>',
             unsafe_allow_html=True
         )
+             # Display inline text with tick icon using Markdown and HTML
+       
             #tick_icon = Image.open(tick_icon_path)
             #st.image(tick_icon, caption=" ", width=20)  # Display tick icon beside the text
         else:
