@@ -107,7 +107,9 @@ if image_files:
 
         # Check if the scan is an X-ray (assuming you have some condition for this)
     if "X-ray" in selected_image:  # Example condition, adjust as needed
-        st.write("Checking if the scan is an X-ray...")
+        #st.write("Checking if the scan is an X-ray...")
+        st.markdown("<p style='color:green;'>Checking if the scan is an X-ray...</p>", unsafe_allow_html=True)
+
         
         # Display inline text with tick icon using Markdown and HTML
         st.markdown(
