@@ -47,9 +47,6 @@ from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import os
 
-image_dir = "data/icons/"  # Replace with your actual directory
-tick_icon_path = "data/icons/tick_icon.png"  # Path to your tick icon
-
 # Set the page title
 st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
 
