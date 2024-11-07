@@ -74,7 +74,7 @@ def load_models():
     return model, xray_detector
 
 st.title("CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
-st.write("Select a patient ID in the dropdown to Predict Pneumonia.")
+#st.write("Select a patient ID in the dropdown to Predict Pneumonia.")
 
 # Load models
 model, xray_detector = load_models()
@@ -88,7 +88,7 @@ image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'j
 
 # Display dropdown if images are available
 if image_files:
-    selected_image = st.selectbox("Select patient ID to diagnose Pneumonia", image_files)
+    selected_image = st.selectbox("Select a patient ID in the dropdown to scan for Pneumonia", image_files)
 
     # Predict and display results when an image is selected
     if selected_image:
@@ -97,14 +97,14 @@ if image_files:
         # Display the image
         image = Image.open(image_path)
         st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
-        st.write("Checking if the image is an X-ray...")
+        st.write("Checking if the scan is an X-ray...")
 
         # Check if the image is an X-ray and classify for pneumonia
         if is_xray(xray_detector, image_path):
-            st.write("Image is an X-ray. Scanning for pneumonia...")
+            st.write("sCAN IS AN X-RAY. Scanning for pneumonia...")
             label = predict(model, image_path)
-            st.write(f"Pneumonia Outcome of scan: {label}")
+            st.write(f"Outcome of scan: {label}")
         else:
-            st.write("Selected image is not an X-ray. Please select a chest X-ray image.")
+            st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
 else:
-    st.write("No images found in the directory. Please add images to 'data/images' and refresh.")
+    st.write("No images found. Please refresh page.")
