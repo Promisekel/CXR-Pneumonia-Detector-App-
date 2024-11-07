@@ -93,6 +93,9 @@ if image_files:
     # Predict and display results when an image is selected
     if selected_image:
         image_path = os.path.join(image_dir, selected_image)
+
+        image_dir = "/path/to/your/images"  # Replace with your actual directory
+        tick_icon_path = "/data/image/tick_icon.png"  # Path to your tick icon
         
         # Display the image
         image = Image.open(image_path)
@@ -104,6 +107,8 @@ if image_files:
             st.write("sCAN IS AN X-RAY. Scanning for pneumonia...")
             label = predict(model, image_path)
             st.write(f"Outcome of scan: {label}")
+            tick_icon = Image.open(tick_icon_path)
+            st.image(tick_icon, caption=" ", width=20)  # Display tick icon beside the text
         else:
             st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
 else:
