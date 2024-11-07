@@ -44,6 +44,9 @@ from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import os
 
+image_dir = "/path/to/your/images"  # Replace with your actual directory
+tick_icon_path = "/data/image/tick_icon.png"  # Path to your tick icon
+
 # Set the page title
 st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
 
@@ -93,9 +96,6 @@ if image_files:
     # Predict and display results when an image is selected
     if selected_image:
         image_path = os.path.join(image_dir, selected_image)
-
-        image_dir = "/path/to/your/images"  # Replace with your actual directory
-        tick_icon_path = "/data/image/tick_icon.png"  # Path to your tick icon
         
         # Display the image
         image = Image.open(image_path)
