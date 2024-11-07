@@ -96,7 +96,7 @@ image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'j
 if image_files:
     selected_image = st.selectbox("Select a patient ID in the dropdown to scan for Pneumonia", image_files)
 
-    # Predict and display results when an image is selected
+   # Predict and display results when an image is selected
     if selected_image:
         image_path = os.path.join(image_dir, selected_image)
         
@@ -105,18 +105,17 @@ if image_files:
         st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
         st.write("Checking if the scan is an X-ray...")
 
-        # Check if the scan is an X-ray (assuming you have some condition for this)
-    if "X-ray" in selected_image:  # Example condition, adjust as needed
-        #st.write("Checking if the scan is an X-ray...")
-        st.markdown("<p style='color:green;'>Checking if the scan is an X-ray...</p>", unsafe_allow_html=True)
-
-        
-        # Display inline text with tick icon using Markdown and HTML
-        st.markdown(
-            f'<p>✅<strong>SCAN IS AN X-RAY. Scanning for pneumonia...</strong></p>',
-            unsafe_allow_html=True
-        )
-    else:
-        st.write("The selected image is not an X-ray.")
+        # Check if the image is an X-ray and classify for pneumonia
+        if is_xray(xray_detector, image_path):
+            st.write("sCAN IS AN X-RAY. Scanning for pneumonia...")
+            label = predict(model, image_path)
+            st.write(f"Outcome of scan: {label}")
+         
+             # Display inline text with tick icon using Markdown and HTML
+       
+            #tick_icon = Image.open(tick_icon_path)
+            #st.image(tick_icon, caption=" ", width=20)  # Display tick icon beside the text
+        else:
+            st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
 else:
     st.write("No images found. Please refresh page.")
