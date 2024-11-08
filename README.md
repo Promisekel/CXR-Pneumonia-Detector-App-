@@ -1,37 +1,15 @@
-# pneumonia-prediction          https://pneumonia-diagnosis.streamlit.app/
+# CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR 
+# LAUNCH APP -> https://pneumonia-diagnosis.streamlit.app/](https://claaritycxrpneumoniadetector.streamlit.app/
 
-### README for Pneumonia Detection from Chest X-rays
+### README CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR 
 
 #### Project Overview:
-This project utilizes machine learning to detect pneumonia from chest X-ray images. It includes two main components: a pneumonia classification model and an X-ray detector model. The application allows users to upload an image, classify if it's an X-ray, and predict the presence of pneumonia if applicable.
+This project utilizes machine learning to detect pneumonia from chest X-ray images. It includes two main components: a pneumonia classification model and an X-ray detector model. The application allows for predicting pneumonia
 
 #### Features:
-- **Upload Images**: Users can upload chest X-ray images (in JPG, JPEG, or PNG format) directly through the web interface.
+- **Choose patient ID**: select patient ID to determine pneumonia of patient x-ray
 - **Prediction**: The application uses a trained model to predict whether an uploaded image is an X-ray. If it is, it further predicts whether pneumonia is present.
 - **User-Friendly Interface**: Built with Streamlit, the interface provides a seamless experience for users to interact with the prediction models.
-
-#### Requirements:
-Ensure you have the following dependencies installed:
-- Python 3.8+
-- `streamlit`
-- `fastai`
-- `PIL` (Pillow)
-
-#### Setup Instructions:
-1. Clone the repository:
-   ```
-   git clone https://github.com/khurshiduktamov/pneumonia-detection.git
-   cd pneumonia-detection
-   ```
-2. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-3. Run the Streamlit app:
-   ```
-   streamlit run app.py
-   ```
-4. Open your browser and navigate to `http://localhost:8501` to use the application.
 
 #### Usage:
 - Upload a chest X-ray image using the file uploader.
