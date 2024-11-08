@@ -15,6 +15,6 @@ def is_xray(model, img_path):
         # Set color based on the prediction
         color = "green" if pred_class == "PNEUMONIA" else "red"
         # Display the outcome with the respective color
-        st.markdown(f"<p style='color:{color}; font-size:20px;'>Outcome of scan: {pred_class}</p>", unsafe_allow_html=True)
+       # st.markdown(f"<p style='color:{color}; font-size:20px;'>Outcome of scan: {pred_class}</p>", unsafe_allow_html=True)
   
     return pred_class in xray_classes
