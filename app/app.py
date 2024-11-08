@@ -40,12 +40,14 @@
 #     st.write(f"Prediction: {label}")
 
 
-
 import streamlit as st
 from PIL import Image
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import os
+
+image_dir = "data/icons/"  # Replace with your actual directory
+tick_icon_path = "data/icons/tick_icon.png"  # Path to your tick icon
 
 # Set the page title
 st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
@@ -93,7 +95,7 @@ image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'j
 if image_files:
     selected_image = st.selectbox("Select a patient ID in the dropdown to scan for Pneumonia", image_files)
 
-   # Predict and display results when an image is selected
+    # Predict and display results when an image is selected
     if selected_image:
         image_path = os.path.join(image_dir, selected_image)
         
@@ -104,11 +106,10 @@ if image_files:
 
         # Check if the image is an X-ray and classify for pneumonia
         if is_xray(xray_detector, image_path):
-           st.write("Scanning for pneumonia...")
+            st.write("sCAN IS AN X-RAY. Scanning for pneumonia...")
             label = predict(model, image_path)
             st.write(f"Outcome of scan: {label}")
-            #st.markdown(f"<p style='color:green;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
-
+         
              # Display inline text with tick icon using Markdown and HTML
        
             #tick_icon = Image.open(tick_icon_path)
