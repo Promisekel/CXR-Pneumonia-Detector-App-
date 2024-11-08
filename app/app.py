@@ -112,6 +112,6 @@ if image_files:
 
         else:
             #st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
-            st.markdown(f"<p style='color:red;'>"X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID: {label}</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='color:red;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID: {label}</p>", unsafe_allow_html=True)
 else:
     st.write("No images found. Please refresh page.")
