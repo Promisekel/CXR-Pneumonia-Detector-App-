@@ -103,17 +103,14 @@ if image_files:
         st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
         st.write("Checking if the scan is an X-ray...")
 
-        # Check if the image is an X-ray and classify for pneumonia
+    # Check if the image is an X-ray and classify for pneumonia
         if is_xray(xray_detector, image_path):
             st.write("Scanning for pneumonia...")
             label = predict(model, image_path)
-            st.write(f"Outcome of scan: {label}")
-            # Set color based on the prediction        
-            #st.markdown(f"<p style='color:red;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
-        
-
+            color = "green" if label == "PNEUMONIA" else "red"
+            st.markdown(f"<p style='color:{color}; font-size:20px;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
         else:
-            #st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
-           st.markdown(f"<p style='color:red;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID: {label}</p>", unsafe_allow_html=True)
+            st.markdown("<p style='color:red; font-size:20px;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
+
 else:
     st.write("No images found. Please refresh page.")
