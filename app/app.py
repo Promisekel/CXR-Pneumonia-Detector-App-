@@ -117,5 +117,3 @@ if image_files:
             st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
 else:
     st.write("No images found. Please refresh page.")
-# Restore PosixPath after prediction
-pathlib.PosixPath = temp
