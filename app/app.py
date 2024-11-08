@@ -107,15 +107,11 @@ if image_files:
         if is_xray(xray_detector, image_path):
             st.write("Scanning for pneumonia...")
             label = predict(model, image_path)
-            st.write(f"Outcome of scan: {label}")
+            #st.write(f"Outcome of scan: {label}")
             st.markdown(f"<p style='color:green;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
 
-         
-             # Display inline text with tick icon using Markdown and HTML
-       
-            #tick_icon = Image.open(tick_icon_path)
-            #st.image(tick_icon, caption=" ", width=20)  # Display tick icon beside the text
         else:
-            st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
+            #st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
+            st.markdown(f"<p style='color:red;'>"X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID: {label}</p>", unsafe_allow_html=True)
 else:
     st.write("No images found. Please refresh page.")
