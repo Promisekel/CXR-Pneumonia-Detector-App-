@@ -108,6 +108,8 @@ if image_files:
             st.write("Scanning for pneumonia...")
             label = predict(model, image_path)
             st.write(f"Outcome of scan: {label}")
+            st.markdown(f"<p style='color:green;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
+
          
              # Display inline text with tick icon using Markdown and HTML
        
