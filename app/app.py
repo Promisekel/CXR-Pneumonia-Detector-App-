@@ -108,9 +108,7 @@ if image_files:
             st.write("Scanning for pneumonia...")
             label = predict(model, image_path)
             st.write(f"Outcome of scan: {label}")
-            # Set color based on the prediction
-            color = "green" if label == "PNEUMONIA" else "red"
-          
+            # Set color based on the prediction        
             #st.markdown(f"<p style='color:red;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
         
 
