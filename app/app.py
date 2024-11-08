@@ -105,7 +105,7 @@ if image_files:
 
         # Check if the image is an X-ray and classify for pneumonia
         if is_xray(xray_detector, image_path):
-            st.write("sCAN IS AN X-RAY. Scanning for pneumonia...")
+            st.write("Scanning for pneumonia...")
             label = predict(model, image_path)
             st.write(f"Outcome of scan: {label}")
          
@@ -117,3 +117,5 @@ if image_files:
             st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
 else:
     st.write("No images found. Please refresh page.")
+# Restore PosixPath after prediction
+pathlib.PosixPath = temp
