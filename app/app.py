@@ -108,10 +108,10 @@ if image_files:
             st.write("Scanning for pneumonia...")
             label = predict(model, image_path)
             #st.write(f"Outcome of scan: {label}")
-            st.markdown(f"<p style='color:red;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
+            #st.markdown(f"<p style='color:red;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
 
         else:
             #st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
-            st.markdown(f"<p style='color:red;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID: {label}</p>", unsafe_allow_html=True)
+           # st.markdown(f"<p style='color:red;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID: {label}</p>", unsafe_allow_html=True)
 else:
     st.write("No images found. Please refresh page.")
