@@ -38,21 +38,14 @@
     
 #     label = predict(model, img_path)
 #     st.write(f"Prediction: {label}")
-
 import streamlit as st
 from PIL import Image
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import os
 
-image_dir = "data/icons/"  # Replace with your actual directory
-tick_icon_path = "data/icons/tick_icon.png"  # Path to your tick icon
-
 # Set the page title
 st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
-
-# GitHub link with logo at the top
-import streamlit as st
 
 st.markdown(
     """
@@ -69,8 +62,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-
-# Load models function
 @st.cache(allow_output_mutation=True)
 def load_models():
     model = load_model()
@@ -78,7 +69,6 @@ def load_models():
     return model, xray_detector
 
 st.title("CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
-#st.write("Select a patient ID in the dropdown to Predict Pneumonia.")
 
 # Load models
 model, xray_detector = load_models()
@@ -94,7 +84,6 @@ image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'j
 if image_files:
     selected_image = st.selectbox("Select a patient ID in the dropdown to scan for Pneumonia", image_files)
 
-    # Predict and display results when an image is selected
     if selected_image:
         image_path = os.path.join(image_dir, selected_image)
         
@@ -103,19 +92,14 @@ if image_files:
         st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
         st.write("Checking if the scan is an X-ray...")
 
-    # Check if the image is an X-ray and classify for pneumonia
+        # Check if the image is an X-ray and classify for pneumonia
         if is_xray(xray_detector, image_path):
-           st.write("Scanning for pneumonia...")
+            st.write("Scanning for pneumonia...")
             label = predict(model, image_path)
-            st.write(f"Outcome of scan: {label}")
-            #st.markdown(f"<p style='color:green;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
-
-             # Display inline text with tick icon using Markdown and HTML
-       
-            #tick_icon = Image.open(tick_icon_path)
-            #st.image(tick_icon, caption=" ", width=20)  # Display tick icon beside the text
+            # Set color based on the prediction
+            color = "green" if label == "PNEUMONIA" else "red"
+            st.markdown(f"<p style='color:{color}; font-size:20px;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
         else:
-            st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
-
+            st.markdown("<p style='color:red; font-size:20px;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
 else:
     st.write("No images found. Please refresh page.")
