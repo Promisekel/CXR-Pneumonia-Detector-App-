@@ -107,8 +107,11 @@ if image_files:
         if is_xray(xray_detector, image_path):
             st.write("Scanning for pneumonia...")
             label = predict(model, image_path)
+            # Set color based on the prediction
+            color = "green" if label == "PNEUMONIA" else "red"
             #st.write(f"Outcome of scan: {label}")
             #st.markdown(f"<p style='color:red;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
+        
 
         else:
             #st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
