@@ -93,27 +93,18 @@ image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'j
 if image_files:
     selected_image = st.selectbox("Select a patient ID in the dropdown to scan for Pneumonia", image_files)
 
-   # Predict and display results when an image is selected
-    if selected_image:
-        image_path = os.path.join(image_dir, selected_image)
-        
-        # Display the image
-        image = Image.open(image_path)
-        st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
-        st.write("Checking if the scan is an X-ray...")
+if selected_image:
+    image_path = os.path.join(image_dir, selected_image)
+    
+    # Display the image
+    image = Image.open(image_path)
+    st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
+    st.write("Checking if the scan is an X-ray...")
 
-        # Check if the image is an X-ray and classify for pneumonia
-        if is_xray(xray_detector, image_path):
-           st.write("Scanning for pneumonia...")
-            label = predict(model, image_path)
-            st.write(f"Outcome of scan: {label}")
-            #st.markdown(f"<p style='color:green;'>Outcome of scan: {label}</p>", unsafe_allow_html=True)
-
-             # Display inline text with tick icon using Markdown and HTML
-       
-            #tick_icon = Image.open(tick_icon_path)
-            #st.image(tick_icon, caption=" ", width=20)  # Display tick icon beside the text
-        else:
-            st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
-else:
-    st.write("No images found. Please refresh page.")
+    # Check if the image is an X-ray and classify for pneumonia
+    if is_xray(xray_detector, image_path):
+        st.write("Scanning for pneumonia...")
+        label = predict(model, image_path)  # Ensure indentation here is consistent
+        st.write(f"Outcome of scan: {label}")
+    else:
+        st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
