@@ -44,77 +44,67 @@ import streamlit as st
 from PIL import Image
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
-import os
-
-image_dir = "data/icons/"  # Replace with your actual directory
-tick_icon_path = "data/icons/tick_icon.png"  # Path to your tick icon
+import pathlib
 
 # Set the page title
-st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
+st.set_page_config(page_title="X-Ray pneumonia detection")
 
-# GitHub link with logo at the top
-import streamlit as st
-
+# Add GitHub link with logo at the top
 st.markdown(
     """
     <div style="display: flex; align-items: center;">
-        <h3>
-            <a href="https://kccr-ghana.org/" target="_blank">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIBfJxFgGX2d961bTaupSiOuAS8TmF_7BC0g&s" 
-                     alt="Custom Icon" style="margin-right: 10px; width: 50px; height: auto;">
-                KCCR
-            </a>
+        <h3><a href="https://github.com/khurshiduktamov/pneumonia-diagnosis" target="_blank">
+            <img src="https://img.icons8.com/ios-filled/50/007BFF/github.png" alt="GitHub" style="margin-right: 10px;">Github Repository   
+        </a>
         </h3>
     </div>
     """,
     unsafe_allow_html=True
 )
 
+# Temporary redirect PosixPath to WindowsPath
+temp = pathlib.PosixPath
+pathlib.PosixPath = pathlib.WindowsPath
 
-# Load models function
+# Function to load models
 @st.cache(allow_output_mutation=True)
 def load_models():
-    model = load_model()
-    xray_detector = load_xray_detector()
+    model = load_model()  # Load pneumonia prediction model
+    xray_detector = load_xray_detector()  # Load X-ray detector model
     return model, xray_detector
 
-st.title("CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
-#st.write("Select a patient ID in the dropdown to Predict Pneumonia.")
+st.title("Pneumonia Detection from Chest X-rays")
+st.write("Upload a chest X-ray image to get a prediction.")
 
 # Load models
 model, xray_detector = load_models()
 
-# Directory where images are stored
-image_dir = "data/images"
-os.makedirs(image_dir, exist_ok=True)
+# Function to predict and display results
+def predict_and_display_results(image):
+    st.image(image, caption='Uploaded Image.', use_column_width=True)
+    st.write("")
+    st.write("Checking if the image is an X-ray...")
 
-# List images in the directory
-image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
+    # Save uploaded image temporarily
+    img_path = f"data/{uploaded_file.name}"
+    image.save(img_path)
 
-# Display dropdown if images are available
-if image_files:
-    selected_image = st.selectbox("Select a patient ID in the dropdown to scan for Pneumonia", image_files)
+    if is_xray(xray_detector, img_path):
+        st.write("Image is an X-ray. Classifying for pneumonia...")
+        label = predict(model, img_path)
+        st.write(f"Prediction: {label}")
+    else:
+        st.write("Uploaded image is not an X-ray. Please upload a chest X-ray image.")
 
-    # Predict and display results when an image is selected
-    if selected_image:
-        image_path = os.path.join(image_dir, selected_image)
-        
-        # Display the image
-        image = Image.open(image_path)
-        st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
-        st.write("Checking if the scan is an X-ray...")
+# Handle file upload
+uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
 
-        # Check if the image is an X-ray and classify for pneumonia
-        if is_xray(xray_detector, image_path):
-            st.write("sCAN IS AN X-RAY. Scanning for pneumonia...")
-            label = predict(model, image_path)
-            st.write(f"Outcome of scan: {label}")
-         
-             # Display inline text with tick icon using Markdown and HTML
-       
-            #tick_icon = Image.open(tick_icon_path)
-            #st.image(tick_icon, caption=" ", width=20)  # Display tick icon beside the text
-        else:
-            st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
-else:
-    st.write("No images found. Please refresh page.")
+if uploaded_file is not None:
+    try:
+        image = Image.open(uploaded_file)
+        predict_and_display_results(image)
+    except:
+        st.write("Invalid image file. Please try again.")
+
+# Restore PosixPath after prediction
+pathlib.PosixPath = temp
