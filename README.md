@@ -1,5 +1,5 @@
 # CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR 
-# LAUNCH APP -> https://pneumonia-diagnosis.streamlit.app/](https://claaritycxrpneumoniadetector.streamlit.app/
+# LAUNCH APP -> https://claaritycxrpneumoniadetector.streamlit.app/
 
 ### README CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR 
 
