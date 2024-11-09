@@ -104,10 +104,7 @@ if selected_image:
     # Check if the image is an X-ray and classify for pneumonia
     if is_xray(xray_detector, image_path):
         #st.write("Scanning for pneumonia...")
-        st.markdown(
-            f"Scanning for pneumonia...</span style='color:red>", 
-                unsafe_allow_html=True
-            )
+         st.markdown("<p style='color:green;'>Scanning for pneumonia...</p>", unsafe_allow_html=True)
         label = predict(model, image_path) 
         if label == "PNEUMONIA":
             st.markdown(
@@ -120,7 +117,11 @@ if selected_image:
                 unsafe_allow_html=True
             )
     else:
-        st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
+        #st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
+        st.markdown("<p style='color:red;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
+
 
 else:
-    st.write("No images found. Please refresh the page.")
+   # st.write("No images found. Please refresh the page.")
+    st.markdown("<p style='color:red;'>No images found. Please refresh the page.</p>", unsafe_allow_html=True)
+
