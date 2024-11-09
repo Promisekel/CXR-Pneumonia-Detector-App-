@@ -106,15 +106,17 @@ if selected_image:
         st.write("Scanning for pneumonia...")
         label = predict(model, image_path) 
         if label == "PNEUMONIA":
-               st.markdown(
+            st.markdown(
                 f"Outcome of scan: ({selected_image}): <span style='color:red; font-size:10px;'>{label}</span>", 
                 unsafe_allow_html=True
+            )
         else:
-              st.markdown(
-                f"Outcome of scan: ({selected_image}): <span style='color:red; font-size:10px;'>{label}</span>", 
+            st.markdown(
+                f"Outcome of scan: ({selected_image}): <span style='color:green; font-size:10px;'>{label}</span>", 
                 unsafe_allow_html=True
+            )
     else:
         st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
 
 else:
-    st.write("No images found. Please refresh page.")
+    st.write("No images found. Please refresh the page.")
