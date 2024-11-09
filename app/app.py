@@ -103,7 +103,11 @@ if selected_image:
 
     # Check if the image is an X-ray and classify for pneumonia
     if is_xray(xray_detector, image_path):
-        st.write("Scanning for pneumonia...")
+        #st.write("Scanning for pneumonia...")
+        st.markdown(
+            f"Scanning for pneumonia...</span style='color:red>", 
+                unsafe_allow_html=True
+            )
         label = predict(model, image_path) 
         if label == "PNEUMONIA":
             st.markdown(
