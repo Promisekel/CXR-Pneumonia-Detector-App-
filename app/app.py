@@ -99,7 +99,8 @@ if selected_image:
     # Display the image
     image = Image.open(image_path)
     st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
-    st.write("Checking if the scan is an X-ray...")
+    #st.write("Checking if the scan is an X-ray...")
+    st.markdown("<p style='color:green;'>Checking if the scan is an X-ray...</p>", unsafe_allow_html=True)
 
     # Check if the image is an X-ray and classify for pneumonia
     if is_xray(xray_detector, image_path):
