@@ -105,6 +105,6 @@ if selected_image:
     if is_xray(xray_detector, image_path):
         st.write("Scanning for pneumonia...")
         label = predict(model, image_path) 
-        st.write(f"Outcome of scan {(selected_image)}: {label}")
+        st.write(f"Outcome of scan {"("selected_image")"}: {label}")
     else:
         st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
