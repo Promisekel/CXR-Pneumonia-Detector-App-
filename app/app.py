@@ -114,7 +114,7 @@ if selected_image:
             )
         else:
             st.markdown(
-                f"Outcome of scan: <span style='color:yellow'>({selected_image})</span>: <span style='color:green'>{label}</span>", 
+                f"Outcome of scan: <span style='color:yellow'>({selected_image})'color:green'>{label}</span>", 
                 unsafe_allow_html=True
             )
     else:
