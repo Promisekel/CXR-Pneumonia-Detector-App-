@@ -110,5 +110,5 @@ if selected_image:
     else:
         st.markdown(f"<h2 style='color:green;'>NORMAL: {label}</h2>", unsafe_allow_html=True)
         #st.write(f"Outcome of scan ({selected_image}): {label}")
-    else:
-        st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
+else:
+    st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
