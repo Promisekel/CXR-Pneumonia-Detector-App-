@@ -120,4 +120,4 @@ if selected_image:
         st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
 
 else:
-    st.markdown("<p style='color:red;'>No images found. Please refresh the page.</p>", unsafe_allow_html=True)
+    st.markdown("<p style='color:red;'>No images found, Please refresh the page.</p>", unsafe_allow_html=True)
