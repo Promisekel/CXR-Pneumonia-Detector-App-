@@ -100,7 +100,7 @@ if selected_image:
     image = Image.open(image_path)
     st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
     st.write("Checking if the scan is an X-ray...")
-    image_name =  st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
+    image_name =  st.image(caption=f"Selected Image: {selected_image}", use_column_width=True)
 
     # Check if the image is an X-ray and classify for pneumonia
     if is_xray(xray_detector, image_path):
