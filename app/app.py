@@ -108,10 +108,9 @@ if selected_image:
         label = predict(model, image_path)
         
         if label == "PNEUMONIA":
-            st.markdown(
-                f"Outcome of scan: ({selected_image}): <span style='color:red'>{label}</span>", 
-                unsafe_allow_html=True
-            )
+            st.markdown( f"Outcome of scan: (<span style='color:yellow'>{selected_image}</span>): <span style='color:red'>{label}</span>",
+                        unsafe_allow_html=True
+                       )
         else:
             st.markdown(
                 f"Outcome of scan: <span style='color:yellow'>({selected_image})'color:green'>{label}</span>", 
