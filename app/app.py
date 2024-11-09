@@ -121,3 +121,6 @@ if selected_image:
 
 else:
     st.markdown("<p style='color:red;'>NO IMAGE FOUND PLEASE REFRESH PAGE.</p>", unsafe_allow_html=True)
+
+# Restore PosixPath after prediction
+pathlib.PosixPath = temp
