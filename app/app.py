@@ -99,29 +99,28 @@ if selected_image:
     # Display the image
     image = Image.open(image_path)
     st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
-    st.write("Checking if the scan is an X-ray...")
-
-    # Check if the image is an X-ray and classify for pneumonia
-    if is_xray(xray_detector, image_path):
-        #st.write("Scanning for pneumonia...")
-         st.markdown("<p style='color:green;'>Scanning for pneumonia...</p>", unsafe_allow_html=True)
-        label = predict(model, image_path) 
-        if label == "PNEUMONIA":
-            st.markdown(
-                f"Outcome of scan: ({selected_image}): <span style='color:red'>{label}</span>", 
-                unsafe_allow_html=True
-            )
-        else:
-            st.markdown(
-                f"Outcome of scan: ({selected_image}): <span style='color:green'>{label}</span>", 
-                unsafe_allow_html=True
-            )
+    st.write("Checking if the scan is an X-ray...")\
+    
+# Check if the image is an X-ray and classify for pneumonia
+if is_xray(xray_detector, image_path):
+    # Display message in green
+    st.markdown("<p style='color:green;'>Scanning for pneumonia...</p>", unsafe_allow_html=True)
+    label = predict(model, image_path)
+    
+    if label == "PNEUMONIA":
+        st.markdown(
+            f"Outcome of scan: ({selected_image}): <span style='color:red'>{label}</span>", 
+            unsafe_allow_html=True
+        )
     else:
-        #st.write("X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.")
-        st.markdown("<p style='color:red;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
-
-
+        st.markdown(
+            f"Outcome of scan: ({selected_image}): <span style='color:green'>{label}</span>", 
+            unsafe_allow_html=True
+        )
 else:
-   # st.write("No images found. Please refresh the page.")
-    st.markdown("<p style='color:red;'>No images found. Please refresh the page.</p>", unsafe_allow_html=True)
+    # Display message in red
+    st.markdown("<p style='color:red;'>X-RAY SCAN NOT WELL TAKEN. PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
 
+# Handle case when no images are found
+else:
+    st.markdown("<p style='color:red;'>No images found. Please refresh the page.</p>", unsafe_allow_html=True)
