@@ -6,7 +6,7 @@ from predict import predict, is_xray
 import os
 
 # Set up page title
-st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
+st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSTIC DETECTOR")
 
 # logo and description
 st.markdown(
