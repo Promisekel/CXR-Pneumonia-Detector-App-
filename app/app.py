@@ -1,58 +1,14 @@
 
-# import streamlit as st
-# from PIL import Image
-# from model import load_model
-# from predict import predict
-# import pathlib
-
-
-# # Temporary redirect PosixPath to WindowsPath
-# temp = pathlib.PosixPath
-# pathlib.PosixPath = pathlib.WindowsPath
-
-# st.title("Pneumonia Detection from Chest X-rays")
-# st.write("Upload a chest X-ray image to get a prediction.")
-
-# model = load_model()
-
-# # Restore PosixPath
-# pathlib.PosixPath = temp
-
-# uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
-
-# if uploaded_file is not None:
-
-#     # Temporary redirect PosixPath to WindowsPath again during prediction
-#     pathlib.PosixPath = pathlib.WindowsPath
-
-#     image = Image.open(uploaded_file)
-#     st.image(image, caption='Uploaded Image.', use_column_width=True)
-#     st.write("")
-#     st.write("Classifying...")
-
-#     img_path = f"data/{uploaded_file.name}"
-#     image.save(img_path)
-
-#     # Restore PosixPath after prediction
-#     pathlib.PosixPath = temp
-    
-#     label = predict(model, img_path)
-#     st.write(f"Prediction: {label}")
-
-
-
 import streamlit as st
 from PIL import Image
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import os
 
-# Set the page title
+# Set up page title
 st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
 
-# GitHub link with logo at the top
-import streamlit as st
-
+# logo and description
 st.markdown(
     """
     <div style="display: flex; align-items: center;">
@@ -89,7 +45,7 @@ os.makedirs(image_dir, exist_ok=True)
 # List images in the directory
 image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
 
-# Display dropdown if images are available
+# Display dropdown if images
 if image_files:
     selected_image = st.selectbox("Select a patient ID in the dropdown to scan for Pneumonia", image_files)
 
