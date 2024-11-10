@@ -112,10 +112,9 @@ if selected_image:
                         unsafe_allow_html=True
                        )
         else:
-            st.markdown(
-                f"Outcome of scan: <span style='color:yellow'>({selected_image})'color:green'>{label}</span>", 
-                unsafe_allow_html=True
-            )
+             st.markdown( f"Outcome of scan: (<span style='color:yellow'>{selected_image}</span>): <span style='color:green'>{label}</span>",
+                        unsafe_allow_html=True
+                       )
     else:
         st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN, PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
 
