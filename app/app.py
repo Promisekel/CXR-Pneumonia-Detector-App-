@@ -229,19 +229,19 @@ elif menu == "Diagnostics":
 # ---------------------
 # View Results Page
 # ---------------------
-elif menu == "View Results":
-    st.title("📂 Categorized Results")
+#elif menu == "View Results":
+#    st.title("📂 Categorized Results")
 
-    normal_images = report_data[report_data["Diagnosis"] == "Normal"]
-    pneumonia_images = report_data[report_data["Diagnosis"] == "PNEUMONIA"]
+ #   normal_images = report_data[report_data["Diagnosis"] == "Normal"]
+ #   pneumonia_images = report_data[report_data["Diagnosis"] == "PNEUMONIA"]
 
-    st.write("### Normal Images")
-    for _, row in normal_images.iterrows():
-        st.write(f"Patient ID: {row['Patient ID']}, Confidence: {row['Confidence (%)']}%")
+ #   st.write("### Normal Images")
+ #   for _, row in normal_images.iterrows():
+ #       st.write(f"Patient ID: {row['Patient ID']}, Confidence: {row['Confidence (%)']}%")
 
-    st.write("### Pneumonia Images")
-    for _, row in pneumonia_images.iterrows():
-        st.write(f"Patient ID: {row['Patient ID']}, Confidence: {row['Confidence (%)']}%")
+  #  st.write("### Pneumonia Images")
+  #  for _, row in pneumonia_images.iterrows():
+  #      st.write(f"Patient ID: {row['Patient ID']}, Confidence: {row['Confidence (%)']}%")
 
 # ---------------------
 # Reports Page
