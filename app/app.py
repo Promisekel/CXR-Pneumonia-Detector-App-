@@ -100,6 +100,13 @@ elif menu == "Diagnostics":
             image = Image.open(image_path)
             st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
 
+            # Safely extract Patient ID
+            try:
+                patient_id = int(''.join(filter(str.isdigit, selected_image.split('.')[0])))
+            except ValueError:
+                st.error("Invalid image filename format. Ensure filenames start with a numeric Patient ID.")
+                st.stop()
+
             st.markdown("<p style='color:green;'>Checking if the scan is an X-ray...</p>", unsafe_allow_html=True)
             if is_xray(xray_detector, image_path):
                 st.markdown("<p style='color:green;'>Scanning for pneumonia...</p>", unsafe_allow_html=True)
@@ -107,7 +114,6 @@ elif menu == "Diagnostics":
                 confidence = 90 + int(label == "PNEUMONIA") * 5
 
                 # Update diagnostic report
-                patient_id = int(selected_image.split('.')[0])  # Extract ID from filename
                 report_entry = {
                     "Patient ID": patient_id,
                     "Name": f"Patient {patient_id}",
@@ -115,6 +121,7 @@ elif menu == "Diagnostics":
                     "Diagnosis": label,
                     "Confidence (%)": confidence,
                 }
+                global report_data
                 report_data = report_data.append(report_entry, ignore_index=True)
                 report_data.to_csv(report_file, index=False)
 
@@ -123,7 +130,6 @@ elif menu == "Diagnostics":
                 st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN, PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
     else:
         st.warning("No images available. Please upload chest X-rays in the 'data/images' folder.")
-
 # ---------------------
 # View Results Page
 # ---------------------
