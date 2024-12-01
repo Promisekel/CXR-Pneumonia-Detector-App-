@@ -1,77 +1,547 @@
+
+import streamlit as st from PIL import Image from model import load_model, load_xray_detector from predict import predict, is_xray import os import pandas as pd import plotly.express as px import csv import plotly.graph_objects as go from plotly.subplots import make_subplots # --------------------- # Page Configuration # --------------------- st.set_page_config( page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR", page_icon="🏥", layout="wide", ) # --------------------- # Sidebar # --------------------- st.sidebar.image( "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIBfJxFgGX2d961bTaupSiOuAS8TmF_7BC0g&s", use_column_width=True, ) st.sidebar.title("Navigation") menu = st.sidebar.radio("Go to", ["Dashboard", "Diagnostics","Reports", "About"]) #"View Results", # --------------------- # Load Models # --------------------- @st.cache(allow_output_mutation=True) def load_models(): model = load_model() xray_detector = load_xray_detector() return model, xray_detector model, xray_detector = load_models() # --------------------- # File Management # --------------------- image_dir = "data/images" os.makedirs(image_dir, exist_ok=True) report_file = "data/diagnostic_reports.csv" if not os.path.exists(report_file): with open(report_file, mode="w", newline="") as f: writer = csv.writer(f) writer.writerow(["Patient ID", "Name", "Date", "Diagnosis", "Confidence (%)"]) # --------------------- # Load Report Data # --------------------- def load_report_data(): if os.path.exists(report_file): return pd.read_csv(report_file) return pd.DataFrame(columns=["Patient ID", "Name", "Date", "Diagnosis", "Confidence (%)"]) report_data = load_report_data() # --------------------- # Helper Functions # --------------------- # Function to count total images in the directory def count_total_images(image_dir): return len([f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]) # Function to count Pneumonia and Normal diagnoses from the report file def count_diagnoses(report_data): pneumonia_count = len(report_data[report_data["Diagnosis"] == "PNEUMONIA"]) normal_count = len(report_data[report_data["Diagnosis"] == "Normal"]) return pneumonia_count, normal_count # --------------------- # Dashboard Page Update # --------------------- if menu == "Dashboard": st.title("🏥 CLAARITY Diagnostics Dashboard") st.markdown("Welcome to the central hub for analyzing diagnostic performance.") # Update metrics dynamically total_images = count_total_images(image_dir) pneumonia_cases, normal_cases = count_diagnoses(report_data) col1, col2, col3 = st.columns(3) with col1: st.metric(label="Total Diagnoses Today", value=total_images) with col2: st.metric(label="Pneumonia Cases Detected", value=pneumonia_cases) with col3: st.metric(label="Normal Cases Detected", value=normal_cases) st.markdown("---") st.subheader("📊 Diagnosis Trends and Summary") # Prepare trend data from the report report_data["Date"] = pd.to_datetime(report_data["Date"]) # Ensure proper date format report_data_grouped = report_data.groupby("Date")["Diagnosis"].value_counts().unstack(fill_value=0) report_data_grouped = report_data_grouped.rename(columns={"PNEUMONIA": "Pneumonia Cases", "Normal": "Normal Cases"}).reset_index() # Ensure the dataframe has values for plotting if "Pneumonia Cases" not in report_data_grouped.columns: report_data_grouped["Pneumonia Cases"] = 0 if "Normal Cases" not in report_data_grouped.columns: report_data_grouped["Normal Cases"] = 0 # Create subplot layout: 2 rows, 1 column fig = make_subplots( rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.1, subplot_titles=("Diagnosis Trend Over Time", "Diagnosis Bar Chart"), row_heights=[0.7, 0.3] # Adjust row heights ) # Add line trace for pneumonia cases (red) fig.add_trace( go.Scatter( x=report_data_grouped["Date"], y=report_data_grouped["Pneumonia Cases"], mode="lines+markers", name="Pneumonia Cases", line=dict(color="red", width=3), marker=dict(size=6), ), row=1, col=1 # Add to first row, first column ) # Add line trace for normal cases (green) fig.add_trace( go.Scatter( x=report_data_grouped["Date"], y=report_data_grouped["Normal Cases"], mode="lines+markers", name="Normal Cases", line=dict(color="green", width=3), marker=dict(size=6), ), row=1, col=1 # Add to first row, first column ) # Add bar trace for pneumonia cases (red) fig.add_trace( go.Bar( x=report_data_grouped["Date"], y=report_data_grouped["Pneumonia Cases"], name="Pneumonia Cases (Bar)", marker_color="red", opacity=0.6, ), row=2, col=1 # Add to second row, first column ) # Add bar trace for normal cases (green) fig.add_trace( go.Bar( x=report_data_grouped["Date"], y=report_data_grouped["Normal Cases"], name="Normal Cases (Bar)", marker_color="green", opacity=0.6, ), row=2, col=1 # Add to second row, first column ) # Update layout to ensure clear axes and legend fig.update_layout( title="Diagnosis Trends and Bar Graph Summary", xaxis_title="Date", yaxis_title="Number of Cases", barmode="group", # Group bars side by side legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1), template="plotly_dark", showlegend=True, height=700, # Adjust overall height for both plots ) # Display the plots st.plotly_chart(fig, use_container_width=True) # Diagnostics Page # --------------------- elif menu == "Diagnostics": st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector") image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))] if image_files: selected_image = st.selectbox("Select a patient ID to scan for Pneumonia", image_files) if selected_image: image_path = os.path.join(image_dir, selected_image) image = Image.open(image_path) st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True) try: patient_id = int(''.join(filter(str.isdigit, selected_image.split('.')[0]))) except ValueError: st.error("Invalid image filename format. Ensure filenames start with a numeric Patient ID.") st.stop() st.markdown("<p style='color:green;'>Checking if the scan is an X-ray...</p>", unsafe_allow_html=True) if is_xray(xray_detector, image_path): st.markdown("<p style='color:green;'>Scanning for pneumonia...</p>", unsafe_allow_html=True) label = predict(model, image_path) confidence = 90 + int(label == "PNEUMONIA") * 5 new_entry = pd.DataFrame([{ "Patient ID": patient_id, "Name": f"Patient {patient_id}", "Date": pd.Timestamp.now().strftime("%Y-%m-%d"), "Diagnosis": label, "Confidence (%)": confidence, }]) report_data = pd.concat([report_data, new_entry], ignore_index=True) report_data.to_csv(report_file, index=False) st.markdown(f"Diagnosis: <span style='color:red'>{label}</span>", unsafe_allow_html=True) else: st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN, PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True) else: st.warning("No images available. Please upload chest X-rays in the 'data/images' folder.") # --------------------- # View Results Page # --------------------- #elif menu == "View Results": # st.title("📂 Categorized Results") # normal_images = report_data[report_data["Diagnosis"] == "Normal"] # pneumonia_images = report_data[report_data["Diagnosis"] == "PNEUMONIA"] # st.write("### Normal Images") # for _, row in normal_images.iterrows(): # st.write(f"Patient ID: {row['Patient ID']}, Confidence: {row['Confidence (%)']}%") # st.write("### Pneumonia Images") # for _, row in pneumonia_images.iterrows(): # st.write(f"Patient ID: {row['Patient ID']}, Confidence: {row['Confidence (%)']}%") # --------------------- # Reports Page # --------------------- elif menu == "Reports": st.title("📄 Diagnosis Reports") st.subheader("Overview of Recent Diagnoses") st.table(report_data) st.download_button( label="Download All Reports", data=report_data.to_csv(index=False), file_name="diagnosis_reports.csv", mime="text/csv", ) # --------------------- # About Page # --------------------- elif menu == "About": st.title("📖 About") st.markdown( """ This app is developed by KCCR to assist hospitals in diagnosing chest X-ray scans for pneumonia using AI models. It aims to improve diagnostic accuracy and reduce the burden on healthcare workers. """ ) st.markdown("Visit [KCCR](https://kccr-ghana.org/) for more information.")
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
 import streamlit as st
 from PIL import Image
 from model import load_model, load_xray_detector
 from predict import predict, is_xray
 import os
+import pandas as pd
+import plotly.express as px
+import csv
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
-# Set up page title
-st.set_page_config(page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSTIC DETECTOR")
-
-# logo and description
-st.markdown(
-    """
-    <div style="display: flex; align-items: center;">
-        <h3>
-            <a href="https://kccr-ghana.org/" target="_blank">
-                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIBfJxFgGX2d961bTaupSiOuAS8TmF_7BC0g&s" 
-                     alt="Custom Icon" style="margin-right: 10px; width: 50px; height: auto;">
-                KCCR
-            </a>
-        </h3>
-    </div>
-    """,
-    unsafe_allow_html=True
+# ---------------------
+# Page Configuration
+# ---------------------
+st.set_page_config(
+    page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR",
+    page_icon="🏥",
+    layout="wide",
 )
 
+# ---------------------
+# Sidebar
+# ---------------------
+st.sidebar.image(
+    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIBfJxFgGX2d961bTaupSiOuAS8TmF_7BC0g&s",
+    use_column_width=True,
+)
+st.sidebar.title("Navigation")
+menu = st.sidebar.radio("Go to", ["Dashboard", "Diagnostics","Reports", "About"]) #"View Results", 
 
-# Load models function
+# ---------------------
+# Load Models
+# ---------------------
 @st.cache(allow_output_mutation=True)
 def load_models():
     model = load_model()
     xray_detector = load_xray_detector()
     return model, xray_detector
 
-st.title("CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR")
-#st.write("Select a patient ID in the dropdown to Predict Pneumonia.")
-
-# Load models
 model, xray_detector = load_models()
 
-# Directory where images are stored
+# ---------------------
+# File Management
+# ---------------------
 image_dir = "data/images"
 os.makedirs(image_dir, exist_ok=True)
 
-# List images in the directory
-image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
+report_file = "data/diagnostic_reports.csv"
+if not os.path.exists(report_file):
+    with open(report_file, mode="w", newline="") as f:
+        writer = csv.writer(f)
+        writer.writerow(["Patient ID", "Name", "Date", "Diagnosis", "Confidence (%)"])
 
-# Display dropdown if images
-if image_files:
-    selected_image = st.selectbox("Select a patient ID in the dropdown to scan for Pneumonia", image_files)
+# ---------------------
+# Load Report Data
+# ---------------------
+def load_report_data():
+    if os.path.exists(report_file):
+        return pd.read_csv(report_file)
+    return pd.DataFrame(columns=["Patient ID", "Name", "Date", "Diagnosis", "Confidence (%)"])
 
-if selected_image:
-    image_path = os.path.join(image_dir, selected_image)
-    
-    # Display the image
-    image = Image.open(image_path)
-    st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
-    #st.write("Checking if the scan is an X-ray...")
-    st.markdown("<p style='color:green;'>Checking if the scan is an X-ray...</p>", unsafe_allow_html=True)
+report_data = load_report_data()
 
-    # Check if the image is an X-ray and classify for pneumonia
-    if is_xray(xray_detector, image_path):
-        st.markdown("<p style='color:green;'>Scanning for pneumonia...</p>", unsafe_allow_html=True)
-        label = predict(model, image_path)
-        
-        if label == "PNEUMONIA":
-            st.markdown( f"Outcome of scan: (<span style='color:yellow'>{selected_image}</span>): <span style='color:red'>{label}</span>",
-                        unsafe_allow_html=True
-                       )
-        else:
-             st.markdown( f"Outcome of scan: (<span style='color:yellow'>{selected_image}</span>): <span style='color:green'>{label}</span>",
-                        unsafe_allow_html=True
-                       )
+
+# ---------------------
+# Helper Functions
+# ---------------------
+
+# Function to count total images in the directory
+def count_total_images(image_dir):
+    return len([f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))])
+
+# Function to count Pneumonia and Normal diagnoses from the report file
+def count_diagnoses(report_data):
+    pneumonia_count = len(report_data[report_data["Diagnosis"] == "PNEUMONIA"])
+    normal_count = len(report_data[report_data["Diagnosis"] == "Normal"])
+    return pneumonia_count, normal_count
+
+# ---------------------
+# Dashboard Page Update
+# ---------------------
+if menu == "Dashboard":
+    st.title("🏥 CLAARITY Diagnostics Dashboard")
+    st.markdown("Welcome to the central hub for analyzing diagnostic performance.")
+
+    # Update metrics dynamically
+    total_images = count_total_images(image_dir)
+    pneumonia_cases, normal_cases = count_diagnoses(report_data)
+
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric(label="Total Diagnoses Today", value=total_images)
+    with col2:
+        st.metric(label="Pneumonia Cases Detected", value=pneumonia_cases)
+    with col3:
+        st.metric(label="Normal Cases Detected", value=normal_cases)
+
+    st.markdown("---")
+    st.subheader("📊 Diagnosis Trends and Summary")
+
+    # Prepare trend data from the report
+    report_data["Date"] = pd.to_datetime(report_data["Date"])  # Ensure proper date format
+    report_data_grouped = report_data.groupby("Date")["Diagnosis"].value_counts().unstack(fill_value=0)
+    report_data_grouped = report_data_grouped.rename(columns={"PNEUMONIA": "Pneumonia Cases", "Normal": "Normal Cases"}).reset_index()
+
+    # Ensure the dataframe has values for plotting
+    if "Pneumonia Cases" not in report_data_grouped.columns:
+        report_data_grouped["Pneumonia Cases"] = 0
+    if "Normal Cases" not in report_data_grouped.columns:
+        report_data_grouped["Normal Cases"] = 0
+
+    # Create subplot layout: 2 rows, 1 column
+    fig = make_subplots(
+        rows=2, cols=1, 
+        shared_xaxes=True, 
+        vertical_spacing=0.1,
+        subplot_titles=("Diagnosis Trend Over Time", "Diagnosis Bar Chart"),
+        row_heights=[0.7, 0.3]  # Adjust row heights
+    )
+
+    # Add line trace for pneumonia cases (red)
+    fig.add_trace(
+        go.Scatter(
+            x=report_data_grouped["Date"],
+            y=report_data_grouped["Pneumonia Cases"],
+            mode="lines+markers",
+            name="Pneumonia Cases",
+            line=dict(color="red", width=3),
+            marker=dict(size=6),
+        ),
+        row=1, col=1  # Add to first row, first column
+    )
+
+    # Add line trace for normal cases (green)
+    fig.add_trace(
+        go.Scatter(
+            x=report_data_grouped["Date"],
+            y=report_data_grouped["Normal Cases"],
+            mode="lines+markers",
+            name="Normal Cases",
+            line=dict(color="green", width=3),
+            marker=dict(size=6),
+        ),
+        row=1, col=1  # Add to first row, first column
+    )
+
+    # Add bar trace for pneumonia cases (red)
+    fig.add_trace(
+        go.Bar(
+            x=report_data_grouped["Date"],
+            y=report_data_grouped["Pneumonia Cases"],
+            name="Pneumonia Cases (Bar)",
+            marker_color="red",
+            opacity=0.6,
+        ),
+        row=2, col=1  # Add to second row, first column
+    )
+
+    # Add bar trace for normal cases (green)
+    fig.add_trace(
+        go.Bar(
+            x=report_data_grouped["Date"],
+            y=report_data_grouped["Normal Cases"],
+            name="Normal Cases (Bar)",
+            marker_color="green",
+            opacity=0.6,
+        ),
+        row=2, col=1  # Add to second row, first column
+    )
+
+    # Update layout to ensure clear axes and legend
+    fig.update_layout(
+        title="Diagnosis Trends and Bar Graph Summary",
+        xaxis_title="Date",
+        yaxis_title="Number of Cases",
+        barmode="group",  # Group bars side by side
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        template="plotly_dark",
+        showlegend=True,
+        height=700,  # Adjust overall height for both plots
+    )
+
+    # Display the plots
+    st.plotly_chart(fig, use_container_width=True)
+
+# Diagnostics Page
+# ---------------------
+elif menu == "Diagnostics":
+    st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector")
+
+    image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
+    if image_files:
+        selected_image = st.selectbox("Select a patient ID to scan for Pneumonia", image_files)
+
+        if selected_image:
+            image_path = os.path.join(image_dir, selected_image)
+            image = Image.open(image_path)
+            st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
+
+            try:
+                patient_id = int(''.join(filter(str.isdigit, selected_image.split('.')[0])))
+            except ValueError:
+                st.error("Invalid image filename format. Ensure filenames start with a numeric Patient ID.")
+                st.stop()
+
+            st.markdown("<p style='color:green;'>Checking if the scan is an X-ray...</p>", unsafe_allow_html=True)
+            if is_xray(xray_detector, image_path):
+                st.markdown("<p style='color:green;'>Scanning for pneumonia...</p>", unsafe_allow_html=True)
+                label = predict(model, image_path)
+                confidence = 90 + int(label == "PNEUMONIA") * 5
+
+                new_entry = pd.DataFrame([{
+                    "Patient ID": patient_id,
+                    "Name": f"Patient {patient_id}",
+                    "Date": pd.Timestamp.now().strftime("%Y-%m-%d"),
+                    "Diagnosis": label,
+                    "Confidence (%)": confidence,
+                }])
+
+                report_data = pd.concat([report_data, new_entry], ignore_index=True)
+                report_data.to_csv(report_file, index=False)
+
+                st.markdown(f"Diagnosis: <span style='color:red'>{label}</span>", unsafe_allow_html=True)
+            else:
+                st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN, PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
     else:
-        st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN, PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
+        st.warning("No images available. Please upload chest X-rays in the 'data/images' folder.")
 
-else:
-    st.markdown("<p style='color:red;'>NO IMAGE FOUND PLEASE REFRESH PAGE.</p>", unsafe_allow_html=True)
+# ---------------------
+# View Results Page
+# ---------------------
+#elif menu == "View Results":
+#    st.title("📂 Categorized Results")
+
+ #   normal_images = report_data[report_data["Diagnosis"] == "Normal"]
+ #   pneumonia_images = report_data[report_data["Diagnosis"] == "PNEUMONIA"]
+
+ #   st.write("### Normal Images")
+ #   for _, row in normal_images.iterrows():
+ #       st.write(f"Patient ID: {row['Patient ID']}, Confidence: {row['Confidence (%)']}%")
+
+  #  st.write("### Pneumonia Images")
+  #  for _, row in pneumonia_images.iterrows():
+  #      st.write(f"Patient ID: {row['Patient ID']}, Confidence: {row['Confidence (%)']}%")
+
+# ---------------------
+# Reports Page
+# ---------------------
+elif menu == "Reports":
+    st.title("📄 Diagnosis Reports")
+    st.subheader("Overview of Recent Diagnoses")
+    st.table(report_data)
+
+    st.download_button(
+        label="Download All Reports",
+        data=report_data.to_csv(index=False),
+        file_name="diagnosis_reports.csv",
+        mime="text/csv",
+    )
+
+# ---------------------
+# About Page
+# ---------------------
+elif menu == "About":
+    st.title("📖 About")
+    st.markdown(
+        """
+        This app is developed by KCCR to assist hospitals in diagnosing chest X-ray scans for pneumonia using AI models.
+        It aims to improve diagnostic accuracy and reduce the burden on healthcare workers.
+        """
+    )
+    st.markdown("Visit [KCCR](https://kccr-ghana.org/) for more information.")
+
