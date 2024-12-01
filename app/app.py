@@ -26,7 +26,7 @@ st.sidebar.image(
     use_column_width=True,
 )
 st.sidebar.title("Navigation")
-menu = st.sidebar.radio("Go to", ["Dashboard", "Diagnostics", "View Results", "Reports", "About"])
+menu = st.sidebar.radio("Go to", ["Dashboard", "Diagnostics","Reports", "About"]) #"View Results", 
 
 # ---------------------
 # Load Models
