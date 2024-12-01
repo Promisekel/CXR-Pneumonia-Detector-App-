@@ -59,38 +59,56 @@ def load_report_data():
 
 report_data = load_report_data()
 
+
 # ---------------------
-# Dashboard Page
+# Helper Functions
+# ---------------------
+
+# Function to count total images in the directory
+def count_total_images(image_dir):
+    return len([f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))])
+
+# Function to count Pneumonia and Normal diagnoses from the report file
+def count_diagnoses(report_data):
+    pneumonia_count = len(report_data[report_data["Diagnosis"] == "PNEUMONIA"])
+    normal_count = len(report_data[report_data["Diagnosis"] == "Normal"])
+    return pneumonia_count, normal_count
+
+# ---------------------
+# Dashboard Page Update
 # ---------------------
 if menu == "Dashboard":
     st.title("🏥 CLAARITY Diagnostics Dashboard")
     st.markdown("Welcome to the central hub for analyzing diagnostic performance.")
 
+    # Update metrics dynamically
+    total_images = count_total_images(image_dir)
+    pneumonia_cases, normal_cases = count_diagnoses(report_data)
+
     col1, col2, col3 = st.columns(3)
     with col1:
-        st.metric(label="Total Diagnoses Today", value=42, delta="+5")
+        st.metric(label="Total Diagnoses Today", value=total_images)
     with col2:
-        st.metric(label="Pneumonia Cases Detected", value=30, delta="+3")
+        st.metric(label="Pneumonia Cases Detected", value=pneumonia_cases)
     with col3:
-        st.metric(label="Other Diagnoses", value=12, delta="-2")
+        st.metric(label="Normal Cases Detected", value=normal_cases)
 
     st.markdown("---")
     st.subheader("📊 Diagnosis Trends")
 
     data = pd.DataFrame({
         "Date": pd.date_range(start="2024-11-01", periods=7),
-        "Pneumonia Cases": [12, 15, 10, 8, 20, 18, 14],
-        "Other Cases": [5, 7, 6, 4, 8, 9, 7],
+        "Pneumonia Cases": [12, 15, 10, 8, pneumonia_cases, 18, 14],
+        "Normal Cases": [5, 7, 6, 4, normal_cases, 9, 7],
     })
     fig = px.line(
         data,
         x="Date",
-        y=["Pneumonia Cases", "Other Cases"],
+        y=["Pneumonia Cases", "Normal Cases"],
         labels={"value": "Cases", "variable": "Condition"},
         title="Diagnosis Trends Over Time",
     )
     st.plotly_chart(fig, use_container_width=True)
-
 # ---------------------
 # Diagnostics Page
 # ---------------------
