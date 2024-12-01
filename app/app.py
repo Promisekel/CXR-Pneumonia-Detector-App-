@@ -6,6 +6,7 @@ import os
 import pandas as pd
 import plotly.express as px
 import csv
+import plotly.graph_objects as go
 
 # ---------------------
 # Page Configuration
@@ -96,18 +97,52 @@ if menu == "Dashboard":
     st.markdown("---")
     st.subheader("📊 Diagnosis Trends")
 
-    data = pd.DataFrame({
-        "Date": pd.date_range(start="2024-11-01", periods=7),
+    # Trend data
+    trend_data = {
+        "Date": pd.date_range(start="2024-11-01", periods=7).strftime("%Y-%m-%d"),
         "Pneumonia Cases": [12, 15, 10, 8, pneumonia_cases, 18, 14],
         "Normal Cases": [5, 7, 6, 4, normal_cases, 9, 7],
-    })
-    fig = px.line(
-        data,
-        x="Date",
-        y=["Pneumonia Cases", "Normal Cases"],
-        labels={"value": "Cases", "variable": "Condition"},
-        title="Diagnosis Trends Over Time",
+    }
+
+    df = pd.DataFrame(trend_data)
+
+    # Create the trend plot with color customization
+    fig = go.Figure()
+
+    # Add pneumonia trend line (red)
+    fig.add_trace(
+        go.Scatter(
+            x=df["Date"],
+            y=df["Pneumonia Cases"],
+            mode="lines+markers",
+            name="Pneumonia Cases",
+            line=dict(color="red", width=3),
+            marker=dict(size=6),
+        )
     )
+
+    # Add normal trend line (green)
+    fig.add_trace(
+        go.Scatter(
+            x=df["Date"],
+            y=df["Normal Cases"],
+            mode="lines+markers",
+            name="Normal Cases",
+            line=dict(color="green", width=3),
+            marker=dict(size=6),
+        )
+    )
+
+    # Customize layout
+    fig.update_layout(
+        title="Diagnosis Trends Over Time",
+        xaxis_title="Date",
+        yaxis_title="Number of Cases",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        template="plotly_dark",
+    )
+
+    # Display the plot
     st.plotly_chart(fig, use_container_width=True)
 # ---------------------
 # Diagnostics Page
