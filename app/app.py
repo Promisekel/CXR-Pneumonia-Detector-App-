@@ -49,7 +49,15 @@ if not os.path.exists(report_file):
         writer = csv.writer(f)
         writer.writerow(["Patient ID", "Name", "Date", "Diagnosis", "Confidence (%)"])
 
-report_data = pd.read_csv(report_file)
+# ---------------------
+# Load Report Data
+# ---------------------
+def load_report_data():
+    if os.path.exists(report_file):
+        return pd.read_csv(report_file)
+    return pd.DataFrame(columns=["Patient ID", "Name", "Date", "Diagnosis", "Confidence (%)"])
+
+report_data = load_report_data()
 
 # ---------------------
 # Dashboard Page
@@ -58,7 +66,6 @@ if menu == "Dashboard":
     st.title("🏥 CLAARITY Diagnostics Dashboard")
     st.markdown("Welcome to the central hub for analyzing diagnostic performance.")
 
-    # Example stats
     col1, col2, col3 = st.columns(3)
     with col1:
         st.metric(label="Total Diagnoses Today", value=42, delta="+5")
@@ -70,7 +77,6 @@ if menu == "Dashboard":
     st.markdown("---")
     st.subheader("📊 Diagnosis Trends")
 
-    # Mock data for analytics
     data = pd.DataFrame({
         "Date": pd.date_range(start="2024-11-01", periods=7),
         "Pneumonia Cases": [12, 15, 10, 8, 20, 18, 14],
@@ -91,10 +97,6 @@ if menu == "Dashboard":
 elif menu == "Diagnostics":
     st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector")
 
-    # Declare global variable at the beginning
-    global report_data
-
-    # List images in the directory
     image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
     if image_files:
         selected_image = st.selectbox("Select a patient ID to scan for Pneumonia", image_files)
@@ -104,7 +106,6 @@ elif menu == "Diagnostics":
             image = Image.open(image_path)
             st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
 
-            # Safely extract Patient ID
             try:
                 patient_id = int(''.join(filter(str.isdigit, selected_image.split('.')[0])))
             except ValueError:
@@ -117,15 +118,15 @@ elif menu == "Diagnostics":
                 label = predict(model, image_path)
                 confidence = 90 + int(label == "PNEUMONIA") * 5
 
-                # Update diagnostic report
-                report_entry = {
+                new_entry = pd.DataFrame([{
                     "Patient ID": patient_id,
                     "Name": f"Patient {patient_id}",
                     "Date": pd.Timestamp.now().strftime("%Y-%m-%d"),
                     "Diagnosis": label,
                     "Confidence (%)": confidence,
-                }
-                report_data = report_data.append(report_entry, ignore_index=True)
+                }])
+
+                report_data = pd.concat([report_data, new_entry], ignore_index=True)
                 report_data.to_csv(report_file, index=False)
 
                 st.markdown(f"Diagnosis: <span style='color:red'>{label}</span>", unsafe_allow_html=True)
