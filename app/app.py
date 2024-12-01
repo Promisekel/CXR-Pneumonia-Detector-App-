@@ -183,16 +183,23 @@ if menu == "Dashboard":
     # Display the plots
     st.plotly_chart(fig, use_container_width=True)
 
+# ---------------------
 # Diagnostics Page
 # ---------------------
 elif menu == "Diagnostics":
     st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector")
-
+    
+    # Initialize session state for image selection if not already set
+    if 'selected_patient_id' not in st.session_state:
+        st.session_state.selected_patient_id = None
+    
     image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
+
     if image_files:
-        selected_image = st.selectbox("Select a patient ID to scan for Pneumonia", image_files)
+        selected_image = st.selectbox("Select a patient ID to scan for Pneumonia", image_files, key="patient_id_selectbox")
 
         if selected_image:
+            st.session_state.selected_patient_id = selected_image  # Save selected patient ID in session state
             image_path = os.path.join(image_dir, selected_image)
             image = Image.open(image_path)
             st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
@@ -204,6 +211,7 @@ elif menu == "Diagnostics":
                 st.stop()
 
             st.markdown("<p style='color:green;'>Checking if the scan is an X-ray...</p>", unsafe_allow_html=True)
+
             if is_xray(xray_detector, image_path):
                 st.markdown("<p style='color:green;'>Scanning for pneumonia...</p>", unsafe_allow_html=True)
                 label = predict(model, image_path)
@@ -216,13 +224,14 @@ elif menu == "Diagnostics":
                     "Diagnosis": label,
                     "Confidence (%)": confidence,
                 }])
-
                 report_data = pd.concat([report_data, new_entry], ignore_index=True)
                 report_data.to_csv(report_file, index=False)
 
                 st.markdown(f"Diagnosis: <span style='color:red'>{label}</span>", unsafe_allow_html=True)
+                st.session_state.selected_patient_id = None  # Reset the patient ID selection after prediction
             else:
                 st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN, PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
+
     else:
         st.warning("No images available. Please upload chest X-rays in the 'data/images' folder.")
 
