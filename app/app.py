@@ -143,6 +143,10 @@ if menu == "Dashboard":
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="plotly_dark",
     )
+
+    # Display the plot
+    st.plotly_chart(fig, use_container_width=True)
+
 # Diagnostics Page
 # ---------------------
 elif menu == "Diagnostics":
