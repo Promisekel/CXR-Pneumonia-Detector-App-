@@ -95,7 +95,7 @@ if menu == "Dashboard":
         st.metric(label="Normal Cases Detected", value=normal_cases)
 
     st.markdown("---")
-    st.subheader("📊 Diagnosis Trends")
+    st.subheader("📊 Diagnosis Trends and Summary")
 
     # Prepare trend data from the report
     report_data["Date"] = pd.to_datetime(report_data["Date"])  # Ensure proper date format
@@ -135,17 +135,43 @@ if menu == "Dashboard":
         )
     )
 
+    # Add bar graph data
+    fig.add_trace(
+        go.Bar(
+            x=report_data_grouped["Date"],
+            y=report_data_grouped["Pneumonia Cases"],
+            name="Pneumonia Cases (Bar)",
+            marker_color="red",
+            opacity=0.6,
+        ),
+        row=2,
+        col=1,
+    )
+    fig.add_trace(
+        go.Bar(
+            x=report_data_grouped["Date"],
+            y=report_data_grouped["Normal Cases"],
+            name="Normal Cases (Bar)",
+            marker_color="green",
+            opacity=0.6,
+        ),
+        row=2,
+        col=1,
+    )
+
     # Customize layout
     fig.update_layout(
-        title="Diagnosis Trends Over Time",
+        title="Diagnosis Trends and Bar Graph Summary",
         xaxis_title="Date",
         yaxis_title="Number of Cases",
+        barmode="group",  # Group bars side by side
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="plotly_dark",
     )
 
-    # Display the plot
+    # Display the plots
     st.plotly_chart(fig, use_container_width=True)
+
 
 # Diagnostics Page
 # ---------------------
