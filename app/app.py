@@ -97,23 +97,25 @@ if menu == "Dashboard":
     st.markdown("---")
     st.subheader("📊 Diagnosis Trends")
 
-    # Trend data
-    trend_data = {
-        "Date": pd.date_range(start="2024-11-01", periods=7).strftime("%Y-%m-%d"),
-        "Pneumonia Cases": [12, 15, 10, 8, pneumonia_cases, 18, 14],
-        "Normal Cases": [5, 7, 6, 4, normal_cases, 9, 7],
-    }
+    # Prepare trend data from the report
+    report_data["Date"] = pd.to_datetime(report_data["Date"])  # Ensure proper date format
+    report_data_grouped = report_data.groupby("Date")["Diagnosis"].value_counts().unstack(fill_value=0)
+    report_data_grouped = report_data_grouped.rename(columns={"PNEUMONIA": "Pneumonia Cases", "Normal": "Normal Cases"}).reset_index()
 
-    df = pd.DataFrame(trend_data)
+    # Ensure the dataframe has values for plotting
+    if "Pneumonia Cases" not in report_data_grouped.columns:
+        report_data_grouped["Pneumonia Cases"] = 0
+    if "Normal Cases" not in report_data_grouped.columns:
+        report_data_grouped["Normal Cases"] = 0
 
-    # Create the trend plot with color customization
+    # Create the trend plot
     fig = go.Figure()
 
     # Add pneumonia trend line (red)
     fig.add_trace(
         go.Scatter(
-            x=df["Date"],
-            y=df["Pneumonia Cases"],
+            x=report_data_grouped["Date"],
+            y=report_data_grouped["Pneumonia Cases"],
             mode="lines+markers",
             name="Pneumonia Cases",
             line=dict(color="red", width=3),
@@ -124,8 +126,8 @@ if menu == "Dashboard":
     # Add normal trend line (green)
     fig.add_trace(
         go.Scatter(
-            x=df["Date"],
-            y=df["Normal Cases"],
+            x=report_data_grouped["Date"],
+            y=report_data_grouped["Normal Cases"],
             mode="lines+markers",
             name="Normal Cases",
             line=dict(color="green", width=3),
@@ -141,10 +143,6 @@ if menu == "Dashboard":
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="plotly_dark",
     )
-
-    # Display the plot
-    st.plotly_chart(fig, use_container_width=True)
-# ---------------------
 # Diagnostics Page
 # ---------------------
 elif menu == "Diagnostics":
