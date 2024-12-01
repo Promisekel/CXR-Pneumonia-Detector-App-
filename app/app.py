@@ -91,6 +91,10 @@ if menu == "Dashboard":
 elif menu == "Diagnostics":
     st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector")
 
+    # Declare global variable at the beginning
+    global report_data
+
+    # List images in the directory
     image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
     if image_files:
         selected_image = st.selectbox("Select a patient ID to scan for Pneumonia", image_files)
@@ -121,7 +125,6 @@ elif menu == "Diagnostics":
                     "Diagnosis": label,
                     "Confidence (%)": confidence,
                 }
-                global report_data
                 report_data = report_data.append(report_entry, ignore_index=True)
                 report_data.to_csv(report_file, index=False)
 
@@ -130,6 +133,7 @@ elif menu == "Diagnostics":
                 st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN, PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
     else:
         st.warning("No images available. Please upload chest X-rays in the 'data/images' folder.")
+
 # ---------------------
 # View Results Page
 # ---------------------
