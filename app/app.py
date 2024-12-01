@@ -109,10 +109,16 @@ if menu == "Dashboard":
     if "Normal Cases" not in report_data_grouped.columns:
         report_data_grouped["Normal Cases"] = 0
 
-    # Create the trend plot
-    fig = go.Figure()
+    # Create subplot layout: 2 rows, 1 column
+    fig = make_subplots(
+        rows=2, cols=1, 
+        shared_xaxes=True, 
+        vertical_spacing=0.1,
+        subplot_titles=("Diagnosis Trend Over Time", "Diagnosis Bar Chart"),
+        row_heights=[0.7, 0.3]  # Adjust row heights
+    )
 
-    # Add pneumonia trend line (red)
+    # Add line trace for pneumonia cases (red)
     fig.add_trace(
         go.Scatter(
             x=report_data_grouped["Date"],
@@ -121,10 +127,11 @@ if menu == "Dashboard":
             name="Pneumonia Cases",
             line=dict(color="red", width=3),
             marker=dict(size=6),
-        )
+        ),
+        row=1, col=1  # Add to first row, first column
     )
 
-    # Add normal trend line (green)
+    # Add line trace for normal cases (green)
     fig.add_trace(
         go.Scatter(
             x=report_data_grouped["Date"],
@@ -133,10 +140,11 @@ if menu == "Dashboard":
             name="Normal Cases",
             line=dict(color="green", width=3),
             marker=dict(size=6),
-        )
+        ),
+        row=1, col=1  # Add to first row, first column
     )
 
-    # Add bar graph data
+    # Add bar trace for pneumonia cases (red)
     fig.add_trace(
         go.Bar(
             x=report_data_grouped["Date"],
@@ -145,9 +153,10 @@ if menu == "Dashboard":
             marker_color="red",
             opacity=0.6,
         ),
-        row=2,
-        col=1,
+        row=2, col=1  # Add to second row, first column
     )
+
+    # Add bar trace for normal cases (green)
     fig.add_trace(
         go.Bar(
             x=report_data_grouped["Date"],
@@ -156,11 +165,10 @@ if menu == "Dashboard":
             marker_color="green",
             opacity=0.6,
         ),
-        row=2,
-        col=1,
+        row=2, col=1  # Add to second row, first column
     )
 
-    # Customize layout
+    # Update layout to ensure clear axes and legend
     fig.update_layout(
         title="Diagnosis Trends and Bar Graph Summary",
         xaxis_title="Date",
@@ -168,11 +176,12 @@ if menu == "Dashboard":
         barmode="group",  # Group bars side by side
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="plotly_dark",
+        showlegend=True,
+        height=700,  # Adjust overall height for both plots
     )
 
     # Display the plots
     st.plotly_chart(fig, use_container_width=True)
-
 
 # Diagnostics Page
 # ---------------------
