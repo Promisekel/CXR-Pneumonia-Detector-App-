@@ -202,7 +202,7 @@ elif menu == "Diagnostics":
             st.session_state.selected_patient_id = selected_image  # Save selected patient ID in session state
             image_path = os.path.join(image_dir, selected_image)
             image = Image.open(image_path)
-            st.image(image, caption=f"Selected Image: {selected_image}", use_column_width=True)
+            st.image(image, caption=f"Selected Image: {selected_image}", width=400) #use_column_width=True)
 
             try:
                 patient_id = int(''.join(filter(str.isdigit, selected_image.split('.')[0])))
