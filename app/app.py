@@ -31,7 +31,7 @@ menu = st.sidebar.radio("Go to", ["Dashboard", "Diagnostics","Reports", "About"]
 # ---------------------
 # Load Models
 # ---------------------
-@st.cache(allow_output_mutation=True)
+@st.cache_resource
 def load_models():
     model = load_model()
     xray_detector = load_xray_detector()
