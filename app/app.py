@@ -23,7 +23,7 @@ st.set_page_config(
 # ---------------------
 st.sidebar.image(
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIBfJxFgGX2d961bTaupSiOuAS8TmF_7BC0g&s",
-    use_column_width=True,
+    use_container_width=True,
 )
 st.sidebar.title("Navigation")
 menu = st.sidebar.radio("Go to", ["Dashboard", "Diagnostics","Reports", "About"]) #"View Results", 
