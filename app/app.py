@@ -137,7 +137,7 @@ st.plotly_chart(fig, use_container_width=True)
 # ---------------------
 # Diagnostics Page
 # ---------------------
-elif menu == "Diagnostics":
+if menu == "Diagnostics":
 	st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector")
     
     # Initialize session state for image selection if not already set
