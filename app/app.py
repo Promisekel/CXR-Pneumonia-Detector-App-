@@ -274,8 +274,8 @@ elif menu == "About":
     st.title("📖 About")
     st.markdown(
         """
-        This app is developed by KCCR to assist hospitals in diagnosing chest X-ray scans for pneumonia using AI models.
-        It aims to improve diagnostic accuracy and reduce the burden on healthcare workers.
+        This app is developed by KCCR to as part of the CLAARITY Project for diagnosing chest X-ray scans for pneumonia using AI models.
+        It aims to improve diagnostic accuracy and reduce time.
         """
     )
     st.markdown("Visit [KCCR](https://kccr-ghana.org/) for more information.")
