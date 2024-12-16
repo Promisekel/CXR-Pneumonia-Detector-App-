@@ -6,6 +6,8 @@ import os
 import pandas as pd
 import plotly.express as px
 import csv
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # ---------------------
 # Page Configuration
@@ -14,6 +16,7 @@ st.set_page_config(
     page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR",
     page_icon="🏥",
     layout="wide",
+    initial_sidebar_state="expanded",  # Keep the sidebar expanded
 )
 
 # ---------------------
@@ -34,7 +37,6 @@ def load_models():
     model = load_model()
     xray_detector = load_xray_detector()
     return model, xray_detector
-
 
 model, xray_detector = load_models()
 
@@ -58,22 +60,24 @@ def load_report_data():
         return pd.read_csv(report_file)
     return pd.DataFrame(columns=["Patient ID", "Name", "Date", "Diagnosis", "Confidence (%)"])
 
-
 report_data = load_report_data()
 
 # ---------------------
 # Helper Functions
 # ---------------------
+
+# Function to count total images in the directory
 def count_total_images(image_dir):
     return len([f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))])
 
+# Function to count Pneumonia and Normal diagnoses from the report file
 def count_diagnoses(report_data):
     pneumonia_count = len(report_data[report_data["Diagnosis"] == "PNEUMONIA"])
     normal_count = len(report_data[report_data["Diagnosis"] == "Normal"])
     return pneumonia_count, normal_count
 
 # ---------------------
-# Dashboard Page
+# Dashboard Page Update
 # ---------------------
 if menu == "Dashboard":
     st.title("🏥 CLAARITY Diagnostics Dashboard")
@@ -92,15 +96,18 @@ if menu == "Dashboard":
         st.metric(label="Normal Cases Detected", value=normal_cases)
 
     st.markdown("---")
-
-    # Diagnosis Bar Chart Only
     st.subheader("📊 Diagnosis Summary")
 
+    # Count diagnoses from the report data
+    pneumonia_cases, normal_cases = count_diagnoses(report_data)
+
+    # Prepare data for bar chart
     diagnosis_counts = pd.DataFrame({
         "Diagnosis": ["Pneumonia", "Normal"],
         "Count": [pneumonia_cases, normal_cases]
     })
 
+    # Create the bar chart with Plotly
     fig = px.bar(
         diagnosis_counts,
         x="Diagnosis",
@@ -111,36 +118,41 @@ if menu == "Dashboard":
         title="Diagnosis Counts",
     )
 
+    # Update layout to remove extra spacing
     fig.update_layout(
         xaxis_title="Diagnosis Category",
         yaxis_title="Number of Cases",
-        showlegend=False,
+        showlegend=False,  # Remove legend
         template="plotly_dark",
-        height=500,
+        height=500,  # Adjust height
     )
 
+    # Ensure text is displayed on top of the bars
     fig.update_traces(textfont_size=14, textposition="outside")
+
+    # Display the chart
     st.plotly_chart(fig, use_container_width=True)
 
 # ---------------------
 # Diagnostics Page
 # ---------------------
-elif menu == "Diagnostics":
+if menu == "Diagnostics":
     st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector")
-
+    
+    # Initialize session state for image selection if not already set
     if 'selected_patient_id' not in st.session_state:
         st.session_state.selected_patient_id = None
-
+    
     image_files = [f for f in os.listdir(image_dir) if f.lower().endswith(('jpg', 'jpeg', 'png'))]
 
     if image_files:
         selected_image = st.selectbox("Select a patient ID to scan for Pneumonia", image_files, key="patient_id_selectbox")
 
         if selected_image:
-            st.session_state.selected_patient_id = selected_image
+            st.session_state.selected_patient_id = selected_image  # Save selected patient ID in session state
             image_path = os.path.join(image_dir, selected_image)
             image = Image.open(image_path)
-            st.image(image, caption=f"Selected Image: {selected_image}", width=600)
+            st.image(image, caption=f"Selected Image: {selected_image}", width=600) 
 
             try:
                 patient_id = int(''.join(filter(str.isdigit, selected_image.split('.')[0])))
@@ -166,13 +178,13 @@ elif menu == "Diagnostics":
                 report_data.to_csv(report_file, index=False)
 
                 st.markdown(f"Diagnosis: <span style='color:red'>{label}</span>", unsafe_allow_html=True)
-                st.session_state.selected_patient_id = None
+                st.session_state.selected_patient_id = None  # Reset the patient ID selection after prediction
             else:
                 st.markdown("<p style='color:red;'>X-RAY SCAN WAS NOT WELL TAKEN, PLEASE SELECT ANOTHER ID.</p>", unsafe_allow_html=True)
+
     else:
         st.warning("No images available. Please upload chest X-rays in the 'data/images' folder.")
-
-# ---------------------
+        # ---------------------
 # Reports Page
 # ---------------------
 elif menu == "Reports":
@@ -187,14 +199,11 @@ elif menu == "Reports":
         mime="text/csv",
     )
 
-# ---------------------
-# About Page
-# ---------------------
 elif menu == "About":
     st.title("📖 About")
     st.markdown(
         """
-        This app is developed by KCCR as part of the CLAARITY Project for diagnosing chest X-ray scans for pneumonia using AI models.
+        This app is developed by KCCR to as part of the CLAARITY Project for diagnosing chest X-ray scans for pneumonia using AI models.
         It aims to improve diagnostic accuracy and reduce time.
         """
     )
