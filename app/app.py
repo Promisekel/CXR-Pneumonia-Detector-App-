@@ -96,92 +96,43 @@ if menu == "Dashboard":
         st.metric(label="Normal Cases Detected", value=normal_cases)
 
     st.markdown("---")
-    st.subheader("📊 Diagnosis Trends and Summary")
+   # Diagnosis Bar Chart Only
+st.subheader("📊 Diagnosis Summary")
 
-    # Prepare trend data from the report
-    report_data["Date"] = pd.to_datetime(report_data["Date"])  # Ensure proper date format
-    report_data_grouped = report_data.groupby("Date")["Diagnosis"].value_counts().unstack(fill_value=0)
-    report_data_grouped = report_data_grouped.rename(columns={"PNEUMONIA": "Pneumonia Cases", "Normal": "Normal Cases"}).reset_index()
+# Count diagnoses from the report data
+pneumonia_cases, normal_cases = count_diagnoses(report_data)
 
-    # Ensure the dataframe has values for plotting
-    if "Pneumonia Cases" not in report_data_grouped.columns:
-        report_data_grouped["Pneumonia Cases"] = 0
-    if "Normal Cases" not in report_data_grouped.columns:
-        report_data_grouped["Normal Cases"] = 0
+# Prepare data for bar chart
+diagnosis_counts = pd.DataFrame({
+    "Diagnosis": ["Pneumonia", "Normal"],
+    "Count": [pneumonia_cases, normal_cases]
+})
 
-    # Create subplot layout: 2 rows, 1 column
-    fig = make_subplots(
-        rows=2, cols=1, 
-        shared_xaxes=True, 
-        vertical_spacing=0.1,
-        subplot_titles=("Diagnosis Trend Over Time", "Diagnosis Bar Chart"),
-        row_heights=[0.7, 0.3]  # Adjust row heights
-    )
+# Create the bar chart with Plotly
+fig = px.bar(
+    diagnosis_counts,
+    x="Diagnosis",
+    y="Count",
+    color="Diagnosis",
+    text="Count",
+    color_discrete_map={"Pneumonia": "red", "Normal": "green"},
+    title="Diagnosis Counts",
+)
 
-    # Add line trace for pneumonia cases (red)
-  #  fig.add_trace(
-   #     go.Scatter(
-   #         x=report_data_grouped["Date"],
-   #         y=report_data_grouped["Pneumonia Cases"],
-   #         mode="lines+markers",
-    #        name="Pneumonia Cases",
-    #        line=dict(color="red", width=3),
-    #        marker=dict(size=6),
-   #     ),
-   #     row=1, col=1  # Add to first row, first column
-   # )
+# Update layout to remove extra spacing
+fig.update_layout(
+    xaxis_title="Diagnosis Category",
+    yaxis_title="Number of Cases",
+    showlegend=False,  # Remove legend
+    template="plotly_dark",
+    height=500,  # Adjust height
+)
 
-    # Add line trace for normal cases (green)
-   # fig.add_trace(
-   #    go.Scatter(
-    #        x=report_data_grouped["Date"],
-    #        y=report_data_grouped["Normal Cases"],
-     #       mode="lines+markers",
-     #       name="Normal Cases",
-      #      line=dict(color="green", width=3),
-      #      marker=dict(size=6),
-    #    ),
-    #    row=1, col=1  # Add to first row, first column
-   # )
+# Ensure text is displayed on top of the bars
+fig.update_traces(textfont_size=14, textposition="outside")
 
-    # Add bar trace for pneumonia cases (red)
-    fig.add_trace(
-        go.Bar(
-            x=report_data_grouped["Date"],
-            y=report_data_grouped["Pneumonia Cases"],
-            name="Pneumonia Cases (Bar)",
-            marker_color="red",
-            opacity=1,
-        ),
-        row=2, col=1  # Add to second row, first column
-    )
-
-    # Add bar trace for normal cases (green)
-    fig.add_trace(
-        go.Bar(
-            x=report_data_grouped["Date"],
-            y=report_data_grouped["Normal Cases"],
-            name="Normal Cases (Bar)",
-            marker_color="green",
-            opacity=1,
-        ),
-        row=2, col=1  # Add to second row, first column
-    )
-
-    # Update layout to ensure clear axes and legend
-    fig.update_layout(
-        title="Diagnosis Trends and Bar Graph Summary",
-        xaxis_title="Date",
-        yaxis_title="Number of Cases",
-        barmode="group",  # Group bars side by side
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
-        template="plotly_dark",
-        showlegend=True,
-        height=1000,  # Adjust overall height for both plots
-    )
-
-    # Display the plots
-    st.plotly_chart(fig, use_container_width=True)
+# Display the chart
+st.plotly_chart(fig, use_container_width=True)
 
 # ---------------------
 # Diagnostics Page
