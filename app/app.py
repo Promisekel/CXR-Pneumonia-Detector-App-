@@ -177,7 +177,7 @@ if menu == "Dashboard":
         legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
         template="plotly_dark",
         showlegend=True,
-        height=700,  # Adjust overall height for both plots
+        height=1000,  # Adjust overall height for both plots
     )
 
     # Display the plots
