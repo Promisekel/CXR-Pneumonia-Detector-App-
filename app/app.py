@@ -151,7 +151,7 @@ if menu == "Dashboard":
             y=report_data_grouped["Pneumonia Cases"],
             name="Pneumonia Cases (Bar)",
             marker_color="red",
-            opacity=5,
+            opacity=1,
         ),
         row=2, col=1  # Add to second row, first column
     )
@@ -163,7 +163,7 @@ if menu == "Dashboard":
             y=report_data_grouped["Normal Cases"],
             name="Normal Cases (Bar)",
             marker_color="green",
-            opacity=5,
+            opacity=1,
         ),
         row=2, col=1  # Add to second row, first column
     )
