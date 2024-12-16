@@ -119,17 +119,17 @@ if menu == "Dashboard":
     )
 
     # Add line trace for pneumonia cases (red)
-    fig.add_trace(
-        go.Scatter(
-            x=report_data_grouped["Date"],
-            y=report_data_grouped["Pneumonia Cases"],
-            mode="lines+markers",
-            name="Pneumonia Cases",
-            line=dict(color="red", width=3),
-            marker=dict(size=6),
-        ),
-        row=1, col=1  # Add to first row, first column
-    )
+  #  fig.add_trace(
+   #     go.Scatter(
+   #         x=report_data_grouped["Date"],
+   #         y=report_data_grouped["Pneumonia Cases"],
+   #         mode="lines+markers",
+    #        name="Pneumonia Cases",
+    #        line=dict(color="red", width=3),
+    #        marker=dict(size=6),
+   #     ),
+   #     row=1, col=1  # Add to first row, first column
+   # )
 
     # Add line trace for normal cases (green)
    # fig.add_trace(
