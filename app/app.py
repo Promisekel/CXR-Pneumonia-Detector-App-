@@ -138,7 +138,7 @@ st.plotly_chart(fig, use_container_width=True)
 # Diagnostics Page
 # ---------------------
 elif menu == "Diagnostics":
-    st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector")
+	st.title("🩺 CLAARITY Chest X-Ray Pneumonia Diagnosis Detector")
     
     # Initialize session state for image selection if not already set
     if 'selected_patient_id' not in st.session_state:
