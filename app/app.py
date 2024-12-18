@@ -16,7 +16,7 @@ st.set_page_config(
     page_title="CLAARITY CHEST X-RAY PNEUMONIA DIAGNOSIS DETECTOR",
     page_icon="🏥",
     layout="wide",
-    initial_sidebar_state="expanded",  # Keep the sidebar expanded
+    initial_sidebar_state="collapsed",  # Keep the sidebar expanded
 )
 
 # ---------------------
